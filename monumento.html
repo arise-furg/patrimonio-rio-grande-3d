@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Visualização 3D · Patrimônio Rio Grande</title>
+
+  <!-- CSS geral do seu site -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <!-- CSS do 3DHOP -->
+  <link rel="stylesheet" href="3dhop/stylesheet/3dhop.css" />
+  <link rel="stylesheet" href="3dhop/stylesheet/3dhop_panels.css" />
+</head>
+
+<body class="viewer-page">
+  <header class="topbar">
+    <div class="container topbar-content">
+      <a class="brand" href="index.html">
+        <span class="brand-title">Patrimônio 3D Rio Grande</span>
+        <span class="brand-subtitle">Visualização 3D em 3DHOP</span>
+      </a>
+
+      <nav class="nav nav-visible">
+        <a href="index.html#monumentos">Voltar aos monumentos</a>
+        <a href="index.html#projeto">Projeto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="viewer-hero">
+      <div class="container viewer-hero-content">
+        <div>
+          <p class="section-label" id="viewerCategoria">Monumento histórico</p>
+          <h1 id="viewerTitulo">Carregando monumento...</h1>
+          <p id="viewerResumo">
+            Aguarde enquanto as informações do monumento são carregadas.
+          </p>
+        </div>
+
+        <div class="viewer-meta">
+          <p><strong>Período:</strong> <span id="viewerPeriodo">—</span></p>
+          <p><strong>Tipologia:</strong> <span id="viewerTipologia">—</span></p>
+          <p><strong>Característica:</strong> <span id="viewerCaracteristica">—</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="viewer-layout">
+      <aside class="viewer-sidebar">
+        <h2>Informações</h2>
+
+        <p id="viewerDescricao"></p>
+
+        <div class="viewer-actions">
+          <button class="button primary full" id="btnResetCamera">
+            Recentralizar modelo
+          </button>
+
+          <button class="button secondary full" id="btnFullscreen">
+            Tela cheia
+          </button>
+        </div>
+
+        <div class="notice">
+          <h3>Como navegar</h3>
+          <p>
+            Use o mouse para girar, aproximar e afastar o modelo. Em dispositivos
+            móveis, utilize gestos de toque.
+          </p>
+        </div>
+
+        <div class="notice">
+          <h3>Observação técnica</h3>
+          <p>
+            Caso o modelo não carregue, verifique se o arquivo <code>.nxs</code>
+            foi enviado corretamente para a pasta <code>models/</code>.
+          </p>
+        </div>
+      </aside>
+
+      <section class="viewer-canvas-area">
+        <div id="viewerStatus" class="viewer-status">
+          Carregando visualizador 3D...
+        </div>
+
+        <div id="3dhop" class="tdhop viewer-box">
+          <canvas id="draw-canvas"></canvas>
+        </div>
+      </section>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <p class="section-label">Contexto patrimonial</p>
+        <h2>Uso público do modelo digital</h2>
+
+        <p id="viewerUsoPublico"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <p>© 2026 · Patrimônio 3D Rio Grande · FURG / ARISE</p>
+      <p>Visualização 3D com 3DHOP.</p>
+    </div>
+  </footer>
+
+  <!-- Bibliotecas do 3DHOP -->
+<script src="3dhop/js/spidergl.js"></script>
+<script src="3dhop/js/jquery.js"></script>
+<script src="3dhop/js/presenter.js"></script>
+<script src="3dhop/js/nexus.js"></script>
+<script src="3dhop/js/trackball_turntable.js"></script>
+<script src="3dhop/js/trackball_pantilt.js"></script>
+<script src="3dhop/js/trackball_sphere.js"></script>
+<script src="3dhop/js/3dhop.js"></script>
+
+<!-- Scripts do site -->
+<script src="assets/js/dados-monumentos.js"></script>
+<script src="assets/js/viewer-3dhop.js"></script>
+</body>
+</html>

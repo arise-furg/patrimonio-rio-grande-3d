@@ -1,0 +1,18 @@
+# Visual Studio / Visual Studio Code
+.vs/
+.vscode/
+
+# Arquivos temporários do Windows
+Thumbs.db
+desktop.ini
+
+# Arquivos temporários gerais
+*.tmp
+*.log
+*.bak
+
+# macOS
+.DS_Store
+
+# Cache
+.cache/

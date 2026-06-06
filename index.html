@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Ciberarqueologia no Centro Histórico de Rio Grande</title>
+
+  <meta
+    name="description"
+    content="Acervo digital 3D do projeto Ciberarqueologia no Centro Histórico de Rio Grande (RS), com modelos fotogramétricos, documentação patrimonial e visualização pública em 3DHOP."
+  />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container topbar-content">
+      <a class="brand" href="index.html">
+        <span class="brand-title">Patrimônio 3D Rio Grande</span>
+        <span class="brand-subtitle">FURG · ARISE · Ciberarqueologia</span>
+      </a>
+
+      <button class="menu-button" id="menuButton" aria-label="Abrir menu">
+        ☰
+      </button>
+
+      <nav class="nav" id="mainNav">
+        <a href="#projeto">Projeto</a>
+        <a href="#metodologia">Metodologia</a>
+        <a href="#monumentos">Monumentos</a>
+        <a href="#educacao">Educação patrimonial</a>
+        <a href="#creditos">Créditos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-overlay">
+        <div class="container hero-content">
+          <p class="eyebrow">Ciberarqueologia · Fotogrametria · Realidade Virtual</p>
+
+          <h1>
+            Ciberarqueologia no Centro Histórico de Rio Grande (RS)
+          </h1>
+
+          <p class="hero-text">
+            Mapeamento fotogramétrico em drone e realidade virtual para conservação,
+            pesquisa e educação patrimonial.
+          </p>
+
+          <div class="hero-actions">
+            <a class="button primary" href="#monumentos">Ver monumentos</a>
+            <a class="button secondary" href="#projeto">Conhecer o projeto</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projeto" class="section">
+      <div class="container two-columns">
+        <div>
+          <p class="section-label">O projeto</p>
+          <h2>Documentação digital para conservar, estudar e ensinar</h2>
+        </div>
+
+        <div>
+          <p>
+            Este site apresenta uma interface pública para o projeto de documentação
+            digital do Centro Histórico de Rio Grande. A proposta articula
+            Ciberarqueologia, aerofotogrametria, modelagem 3D, Realidade Virtual
+            e educação patrimonial.
+          </p>
+
+          <p>
+            O objetivo é constituir uma infraestrutura digital de referência para
+            bens arquitetônicos históricos, permitindo documentação métrico-espacial,
+            visualização online, acesso aberto e uso pedagógico em contextos escolares,
+            museológicos e universitários.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-muted">
+      <div class="container">
+        <p class="section-label">Por que digitalizar?</p>
+        <h2>Três problemas centrais enfrentados pelo projeto</h2>
+
+        <div class="cards three">
+          <article class="card">
+            <h3>Déficit documental</h3>
+            <p>
+              Ausência de documentação tridimensional precisa, ortomosaicos,
+              nuvens de pontos e modelos texturizados voltados ao monitoramento
+              do patrimônio.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Déficit técnico-institucional</h3>
+            <p>
+              Necessidade de ferramentas digitais que auxiliem gestores públicos,
+              pesquisadores e equipes técnicas no acompanhamento de alterações
+              futuras.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Déficit socioeducativo</h3>
+            <p>
+              Distanciamento entre comunidade escolar e patrimônio local, exigindo
+              recursos digitais acessíveis para educação patrimonial.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="metodologia" class="section">
+      <div class="container">
+        <p class="section-label">Metodologia</p>
+        <h2>Fluxo técnico da digitalização patrimonial</h2>
+
+        <div class="workflow">
+          <div class="workflow-step">
+            <span class="workflow-number">1</span>
+            <h3>Pesquisa documental</h3>
+            <p>Mapas, plantas, relatórios, fotografias históricas e bibliografia.</p>
+          </div>
+
+          <div class="workflow-step">
+            <span class="workflow-number">2</span>
+            <h3>Captura aérea</h3>
+            <p>Voos com drone, sobreposição fotográfica e registro sistemático.</p>
+          </div>
+
+          <div class="workflow-step">
+            <span class="workflow-number">3</span>
+            <h3>Processamento 3D</h3>
+            <p>Metashape, WebODM, CloudCompare, Blender e geração de malhas.</p>
+          </div>
+
+          <div class="workflow-step">
+            <span class="workflow-number">4</span>
+            <h3>Publicação digital</h3>
+            <p>Modelos online, visualização em 3DHOP, WebXR e repositórios abertos.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="monumentos" class="section section-muted">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">Acervo 3D</p>
+            <h2>Monumentos inicialmente contemplados</h2>
+          </div>
+
+          <p class="section-intro">
+            Selecione um monumento para abrir a página de visualização 3D.
+          </p>
+        </div>
+
+        <div class="monument-grid" id="monumentGrid">
+          <!-- Os cards serão carregados automaticamente pelo JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <section id="educacao" class="section">
+      <div class="container two-columns">
+        <div>
+          <p class="section-label">Educação patrimonial</p>
+          <h2>Do modelo 3D ao uso público do conhecimento</h2>
+        </div>
+
+        <div>
+          <p>
+            A publicação dos modelos digitais busca ampliar o acesso público ao
+            patrimônio de Rio Grande. O acervo pode ser usado em oficinas, aulas,
+            ações de divulgação científica, exposições e atividades de educação
+            patrimonial.
+          </p>
+
+          <ul class="check-list">
+            <li>disponibilização pública de modelos digitais;</li>
+            <li>uso em oficinas com professores da rede pública;</li>
+            <li>integração com Realidade Virtual e recursos imersivos;</li>
+            <li>apoio à conservação e ao turismo cultural.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="creditos" class="section section-dark">
+      <div class="container">
+        <p class="section-label">Créditos</p>
+        <h2>Universidade e Município em cooperação pelo patrimônio de Rio Grande</h2>
+
+        <p>
+          Projeto coordenado pelo Prof. Dr. Alex da Silva Martire, Curso de Arqueologia,
+          Instituto de Ciências Humanas e da Informação, Universidade Federal do Rio Grande.
+        </p>
+
+        <p>
+          Laboratório Arqueologia Interativa e Simulações Eletrônicas — ARISE/FURG.
+        </p>
+
+        <p class="final-slogan">
+          Preservar digitalmente hoje para ampliar o acesso público amanhã.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <p>© 2026 · Patrimônio 3D Rio Grande · FURG / ARISE</p>
+      <p>Modelos digitais publicados para fins de pesquisa, conservação e educação patrimonial.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/dados-monumentos.js"></script>
+  <script src="assets/js/site.js"></script>
+</body>
+</html>
