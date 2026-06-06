@@ -35,7 +35,7 @@ const MONUMENTOS = {
 
   "paco-municipal": {
     id: "paco-municipal",
-    titulo: "Paço Municipal",
+    titulo: "Paço  Municipal",
     categoria: "Edifício governamental",
     periodo: "1824 / fachada de 1896",
     tipologia: "Governamental",
