@@ -6,20 +6,30 @@ let metadadosVisiveis = false;
 let anotacoesVisiveis = false;
 
 /*
-  Ajustes centrais da câmera inicial.
+  Ajustes de orientação do modelo.
 
-  Para alterar a posição inicial depois:
-  - Aumente CAMERA_START_DISTANCE para afastar o modelo.
-  - Diminua CAMERA_START_DISTANCE para aproximar o modelo.
-  - Altere CAMERA_START_PHI para inclinar a visão.
-  - Altere CAMERA_START_THETA para girar horizontalmente.
+  Seu modelo está aparecendo visto de cima porque, ao que tudo indica,
+  o arquivo .nxs foi gerado com o edifício deitado em relação ao sistema
+  de eixos usado pelo 3DHOP.
 
-  A configuração abaixo força uma visão mais frontal e com mais zoom
-  do que a versão anterior.
+  Por isso, aqui fazemos duas coisas:
+  1. Rotacionamos o MODELO.
+  2. Configuramos a CÂMERA inicial.
+
+  Se a fachada ainda não aparecer frontal:
+  - teste MODEL_ROTATION_X = 90;
+  - depois teste MODEL_ROTATION_Y = 90;
+  - depois teste MODEL_ROTATION_Z = 90;
+  mantendo os outros em 0.
 */
-const CAMERA_START_DISTANCE = 1.35;
-const CAMERA_START_PHI = -0.22;
-const CAMERA_START_THETA = -1.57;
+
+const MODEL_ROTATION_X = -90;
+const MODEL_ROTATION_Y = 0;
+const MODEL_ROTATION_Z = 0;
+
+const CAMERA_START_DISTANCE = 1.15;
+const CAMERA_START_PHI = 0.0;
+const CAMERA_START_THETA = 0.0;
 
 document.addEventListener("DOMContentLoaded", () => {
   const monumento = obterMonumentoAtual();
@@ -128,10 +138,18 @@ function configurarCena3DHOP(monumento) {
   presenter = new Presenter("draw-canvas");
   window.presenter = presenter;
 
-  /*
-    SphereTrackball é usado para permitir rotação livre em 360 graus
-    com o botão esquerdo do mouse.
-  */
+  const instanciaModelo = {
+    mesh: "modelo_principal"
+  };
+
+  const matrizModelo = criarMatrizDeRotacaoDoModelo();
+
+  if (matrizModelo) {
+    instanciaModelo.transform = {
+      matrix: matrizModelo
+    };
+  }
+
   presenter.setScene({
     meshes: {
       modelo_principal: {
@@ -140,9 +158,7 @@ function configurarCena3DHOP(monumento) {
     },
 
     modelInstances: {
-      instancia_modelo: {
-        mesh: "modelo_principal"
-      }
+      instancia_modelo: instanciaModelo
     },
 
     trackball: {
@@ -199,6 +215,47 @@ function configurarCena3DHOP(monumento) {
   }
 }
 
+function criarMatrizDeRotacaoDoModelo() {
+  if (typeof SglMat4 === "undefined") {
+    return null;
+  }
+
+  let matriz = SglMat4.identity();
+
+  matriz = multiplicarMatrizSegura(
+    matriz,
+    SglMat4.rotationAngleAxis(grausParaRadianos(MODEL_ROTATION_X), [1.0, 0.0, 0.0])
+  );
+
+  matriz = multiplicarMatrizSegura(
+    matriz,
+    SglMat4.rotationAngleAxis(grausParaRadianos(MODEL_ROTATION_Y), [0.0, 1.0, 0.0])
+  );
+
+  matriz = multiplicarMatrizSegura(
+    matriz,
+    SglMat4.rotationAngleAxis(grausParaRadianos(MODEL_ROTATION_Z), [0.0, 0.0, 1.0])
+  );
+
+  return matriz;
+}
+
+function multiplicarMatrizSegura(a, b) {
+  if (typeof SglMat4.mul === "function") {
+    return SglMat4.mul(a, b);
+  }
+
+  if (typeof SglMat4.multiply === "function") {
+    return SglMat4.multiply(a, b);
+  }
+
+  return b;
+}
+
+function grausParaRadianos(graus) {
+  return graus * Math.PI / 180.0;
+}
+
 function configurarBotoesDaInterface() {
   vincularCliquePersistente("home", () => actionsToolbar("home"));
   vincularCliquePersistente("info", () => actionsToolbar("info"));
@@ -221,11 +278,11 @@ function configurarBotoesDaInterface() {
   const metadataPanel = document.getElementById("metadata-panel");
   const annotationsPanel = document.getElementById("annotations-panel");
 
-  impedirCaptura3DHOP(metadataPanel);
-  impedirCaptura3DHOP(annotationsPanel);
+  impedirCapturaParcial3DHOP(metadataPanel);
+  impedirCapturaParcial3DHOP(annotationsPanel);
 
   document.querySelectorAll("#toolbar img").forEach((icone) => {
-    impedirCaptura3DHOP(icone);
+    impedirCapturaParcial3DHOP(icone);
   });
 }
 
@@ -235,6 +292,15 @@ function vincularCliquePersistente(id, funcao) {
   if (!elemento) {
     return;
   }
+
+  elemento.addEventListener(
+    "pointerdown",
+    (evento) => {
+      evento.preventDefault();
+      evento.stopPropagation();
+    },
+    true
+  );
 
   elemento.addEventListener(
     "mousedown",
@@ -265,12 +331,12 @@ function vincularCliquePersistente(id, funcao) {
   );
 }
 
-function impedirCaptura3DHOP(elemento) {
+function impedirCapturaParcial3DHOP(elemento) {
   if (!elemento) {
     return;
   }
 
-  ["mousedown", "mouseup", "mousemove", "click", "dblclick", "wheel", "touchstart", "touchmove", "touchend"].forEach(
+  ["mousedown", "mouseup", "mousemove", "dblclick", "wheel", "touchstart", "touchmove", "touchend"].forEach(
     (tipoEvento) => {
       elemento.addEventListener(
         tipoEvento,
@@ -343,14 +409,10 @@ function actionsToolbar(action) {
 }
 
 function resetarCameraInicial() {
-  if (!window.presenter) {
+  if (!window.presenter || !monumentoAtual) {
     return;
   }
 
-  /*
-    Para a visão inicial personalizada, recriamos a cena mantendo
-    o mesmo modelo. Isso evita voltar para a orientação padrão top-view.
-  */
   configurarCena3DHOP(monumentoAtual);
   configurarFerramentasDeSecao();
 
