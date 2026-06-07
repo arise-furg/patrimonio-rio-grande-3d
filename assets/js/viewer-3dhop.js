@@ -6,14 +6,26 @@ let metadadosVisiveis = false;
 let anotacoesVisiveis = false;
 
 /*
-  Orientação atual do modelo:
-  - MODEL_ROTATION_X = -90 corrige o modelo exportado "deitado".
-  - CAMERA_START_THETA = Math.PI coloca a câmera no lado frontal.
+  ORIENTAÇÃO DO MODELO NO 3DHOP
+
+  Nesta versão, NÃO usamos MODEL_ROTATION_Z = 180.
+
+  Motivo:
+  - MODEL_ROTATION_X = -90 corrige o modelo que veio "deitado".
+  - MODEL_ROTATION_Z = 180, depois dessa correção, pode fazer o modelo sair do enquadramento
+    ou ser enquadrado de modo incorreto pelo 3DHOP.
+  - Para ver a fachada frontal, é mais seguro mudar a câmera, não girar o modelo no eixo Z.
+
+  Configuração recomendada para o seu modelo atual:
+  - X = -90: coloca o edifício em pé.
+  - Y = 0: não vira o edifício de ponta-cabeça.
+  - Z = 0: evita que o modelo desapareça.
+  - CAMERA_START_THETA = Math.PI: faz a câmera olhar o lado oposto, trazendo a fachada para frente.
 */
 
 const MODEL_ROTATION_X = -90;
 const MODEL_ROTATION_Y = 0;
-const MODEL_ROTATION_Z = 180;
+const MODEL_ROTATION_Z = 0;
 
 const CAMERA_START_DISTANCE = 1.15;
 const CAMERA_START_PHI = 0.0;
@@ -316,17 +328,24 @@ function impedirCapturaParcial3DHOP(elemento) {
     return;
   }
 
-  ["mousedown", "mouseup", "mousemove", "dblclick", "wheel", "touchstart", "touchmove", "touchend"].forEach(
-    (tipoEvento) => {
-      elemento.addEventListener(
-        tipoEvento,
-        (evento) => {
-          evento.stopPropagation();
-        },
-        true
-      );
-    }
-  );
+  [
+    "mousedown",
+    "mouseup",
+    "mousemove",
+    "dblclick",
+    "wheel",
+    "touchstart",
+    "touchmove",
+    "touchend"
+  ].forEach((tipoEvento) => {
+    elemento.addEventListener(
+      tipoEvento,
+      (evento) => {
+        evento.stopPropagation();
+      },
+      true
+    );
+  });
 }
 
 function actionsToolbar(action) {
