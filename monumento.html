@@ -80,17 +80,25 @@
         <div class="notice">
           <h3>Como navegar</h3>
           <p>
-            Use os botões de orientação para visualizar o modelo de frente, trás,
-            esquerda, direita, topo e base. Para navegação livre, use o modo de
-            rotação 360° e arraste com o mouse sobre o modelo.
+            Use os botões sobre o visualizador para escolher rotação, pan ou zoom.
+            No modo pan e no modo zoom, use o botão esquerdo do mouse sobre a tela 3D.
           </p>
         </div>
 
         <div class="notice">
-          <h3>Ferramentas do visualizador</h3>
+          <h3>Orientações</h3>
           <p>
-            A interface inclui rotação livre, pan, zoom, vistas ortogonais,
-            recentralização do modelo e tela cheia.
+            Os botões Frente, Trás, Esquerda, Direita, Topo e Base ajudam a posicionar
+            rapidamente a visualização do modelo.
+          </p>
+        </div>
+
+        <div class="notice">
+          <h3>Medição</h3>
+          <p>
+            A ferramenta de medição usa a unidade espacial do modelo. Se o modelo foi
+            escalado em metros antes da conversão para <code>.nxs</code>, a leitura
+            corresponderá a metros.
           </p>
         </div>
 
@@ -109,14 +117,6 @@
         </div>
 
         <div id="3dhop" class="tdhop viewer-box">
-          <!-- Gizmo visual de orientação -->
-          <div class="orientation-gizmo" aria-hidden="true">
-            <div class="gizmo-center"></div>
-            <div class="gizmo-axis gizmo-x">X</div>
-            <div class="gizmo-axis gizmo-y">Y</div>
-            <div class="gizmo-axis gizmo-z">Z</div>
-          </div>
-
           <!-- Barra principal de ferramentas -->
           <div id="toolbar" class="toolbar-3dhop-custom">
             <button
@@ -144,8 +144,8 @@
             <button
               class="tool-button"
               type="button"
-              title="Zoom"
-              aria-label="Zoom"
+              title="Zoom por arraste"
+              aria-label="Zoom por arraste"
               data-tool="zoom"
               onclick="ativarZoom3DHOP()"
             >
@@ -170,6 +170,28 @@
               onclick="afastarModelo3DHOP()"
             >
               −
+            </button>
+
+            <button
+              class="tool-button"
+              type="button"
+              title="Iluminação"
+              aria-label="Iluminação"
+              data-tool="lighting"
+              onclick="alternarIluminacao3DHOP()"
+            >
+              ☀
+            </button>
+
+            <button
+              class="tool-button"
+              type="button"
+              title="Medição"
+              aria-label="Medição"
+              data-tool="measure"
+              onclick="alternarMedicao3DHOP()"
+            >
+              📏
             </button>
 
             <button
