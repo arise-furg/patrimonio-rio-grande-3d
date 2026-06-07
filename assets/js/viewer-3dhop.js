@@ -6,18 +6,21 @@ let metadadosVisiveis = false;
 let anotacoesVisiveis = false;
 
 /*
-  CONFIGURAÇÃO DO MODELO DA ANTIGA ALFÂNDEGA
+  ORIENTAÇÃO DO MODELO NO 3DHOP
 
-  Esta foi a configuração que funcionou corretamente no seu modelo:
-  - MODEL_ROTATION_X = -90;
-  - MODEL_ROTATION_Y = 0;
-  - MODEL_ROTATION_Z = 180;
-  - CAMERA_START_THETA = Math.PI;
+  Nesta versão, NÃO usamos MODEL_ROTATION_Z = 180.
 
-  ZOOM:
-  - CAMERA_START_DISTANCE controla a distância inicial da câmera.
-  - MIN_ZOOM_DISTANCE controla o quanto o usuário pode aproximar.
-  - Quanto menor o MIN_ZOOM_DISTANCE, mais perto será possível chegar.
+  Motivo:
+  - MODEL_ROTATION_X = -90 corrige o modelo que veio "deitado".
+  - MODEL_ROTATION_Z = 180, depois dessa correção, pode fazer o modelo sair do enquadramento
+    ou ser enquadrado de modo incorreto pelo 3DHOP.
+  - Para ver a fachada frontal, é mais seguro mudar a câmera, não girar o modelo no eixo Z.
+
+  Configuração recomendada para o seu modelo atual:
+  - X = -90: coloca o edifício em pé.
+  - Y = 0: não vira o edifício de ponta-cabeça.
+  - Z = 0: evita que o modelo desapareça.
+  - CAMERA_START_THETA = Math.PI: faz a câmera olhar o lado oposto, trazendo a fachada para frente.
 */
 
 const MODEL_ROTATION_X = -90;
@@ -27,11 +30,6 @@ const MODEL_ROTATION_Z = 180;
 const CAMERA_START_DISTANCE = 1.15;
 const CAMERA_START_PHI = 0.0;
 const CAMERA_START_THETA = Math.PI;
-
-const MIN_ZOOM_DISTANCE = 0.01;
-const MAX_ZOOM_DISTANCE = 80.0;
-
-const ZOOM_BUTTON_STEPS = 3;
 
 document.addEventListener("DOMContentLoaded", () => {
   const monumento = obterMonumentoAtual();
@@ -167,7 +165,7 @@ function configurarCena3DHOP(monumento) {
         startPanY: 0.0,
         startPanZ: 0.0,
 
-        minMaxDist: [MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE]
+        minMaxDist: [0.1, 80.0]
       }
     },
 
@@ -369,12 +367,14 @@ function actionsToolbar(action) {
   }
 
   if (action === "zoomin") {
-    aplicarZoomAproximar();
+    presenter.zoomIn();
+    repintar3DHOP();
     return;
   }
 
   if (action === "zoomout") {
-    aplicarZoomAfastar();
+    presenter.zoomOut();
+    repintar3DHOP();
     return;
   }
 
@@ -402,30 +402,6 @@ function actionsToolbar(action) {
     alternarTelaCheia();
     return;
   }
-}
-
-function aplicarZoomAproximar() {
-  if (!window.presenter || typeof presenter.zoomIn !== "function") {
-    return;
-  }
-
-  for (let i = 0; i < ZOOM_BUTTON_STEPS; i++) {
-    presenter.zoomIn();
-  }
-
-  repintar3DHOP();
-}
-
-function aplicarZoomAfastar() {
-  if (!window.presenter || typeof presenter.zoomOut !== "function") {
-    return;
-  }
-
-  for (let i = 0; i < ZOOM_BUTTON_STEPS; i++) {
-    presenter.zoomOut();
-  }
-
-  repintar3DHOP();
 }
 
 function resetarCameraInicial() {
