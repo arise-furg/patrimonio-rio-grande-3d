@@ -208,21 +208,15 @@ h2 {
   padding-left: 38px;
 }
 
-.viewer-status {
-  position: absolute;
-  z-index: 80;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--color-primary);
-  padding: 8px 12px;
-  border-radius: 999px;
-  font-size: 0.84rem;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+/* STATUS DO VISUALIZADOR
+   O aviso "Modelo carregado..." foi ocultado conforme solicitado. */
+
+.viewer-status,
+.duewelsteene-status {
+  display: none !important;
 }
 
-.duewelsteene-status {
-  top: 78px;
-  left: 70px;
-}
+/* VISUALIZADOR */
 
 .duewelsteene-viewer {
   position: relative;
@@ -265,35 +259,59 @@ h2 {
   background-repeat: repeat !important;
 }
 
-/* CORREÇÃO DA TELA CHEIA DO 3DHOP */
+/* CORREÇÃO FORTE DA TELA CHEIA DO 3DHOP */
 
+#3dhop.fullscreen-active,
 #3dhop:fullscreen,
 #3dhop:-webkit-full-screen,
 #3dhop:-moz-full-screen,
 #3dhop:-ms-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+
   width: 100vw !important;
   height: 100vh !important;
   min-width: 100vw !important;
   min-height: 100vh !important;
-  max-width: none !important;
-  max-height: none !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+
   margin: 0 !important;
   padding: 0 !important;
+  border: 0 !important;
+
   background: #e6e6e6 !important;
   overflow: hidden !important;
+  z-index: 999999 !important;
 }
 
+#3dhop.fullscreen-active #draw-canvas,
 #3dhop:fullscreen #draw-canvas,
 #3dhop:-webkit-full-screen #draw-canvas,
 #3dhop:-moz-full-screen #draw-canvas,
 #3dhop:-ms-fullscreen #draw-canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+
   width: 100vw !important;
   height: 100vh !important;
   min-width: 100vw !important;
   min-height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+
   display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
+#3dhop.fullscreen-active .duewelsteene-canvas,
 #3dhop:fullscreen .duewelsteene-canvas,
 #3dhop:-webkit-full-screen .duewelsteene-canvas,
 #3dhop:-moz-full-screen .duewelsteene-canvas,
@@ -302,15 +320,17 @@ h2 {
   height: 100vh !important;
 }
 
+#3dhop.fullscreen-active #toolbar,
 #3dhop:fullscreen #toolbar,
 #3dhop:-webkit-full-screen #toolbar,
 #3dhop:-moz-full-screen #toolbar,
 #3dhop:-ms-fullscreen #toolbar {
   top: 18px !important;
   left: 18px !important;
-  z-index: 120 !important;
+  z-index: 1000000 !important;
 }
 
+#3dhop.fullscreen-active #tdhlg,
 #3dhop:fullscreen #tdhlg,
 #3dhop:-webkit-full-screen #tdhlg,
 #3dhop:-moz-full-screen #tdhlg,
@@ -319,6 +339,7 @@ h2 {
   bottom: 24px !important;
 }
 
+#3dhop.fullscreen-active .viewer-floating-panel,
 #3dhop:fullscreen .viewer-floating-panel,
 #3dhop:-webkit-full-screen .viewer-floating-panel,
 #3dhop:-moz-full-screen .viewer-floating-panel,
@@ -327,11 +348,12 @@ h2 {
   right: 24px !important;
 }
 
+#3dhop.fullscreen-active .output-box,
 #3dhop:fullscreen .output-box,
 #3dhop:-webkit-full-screen .output-box,
 #3dhop:-moz-full-screen .output-box,
 #3dhop:-ms-fullscreen .output-box {
-  z-index: 130 !important;
+  z-index: 1000001 !important;
 }
 
 /* TOOLBAR NATIVA DO 3DHOP */
@@ -521,12 +543,6 @@ h2 {
     height: 620px;
     min-height: 620px;
   }
-
-  .duewelsteene-status {
-    top: 76px;
-    left: 70px;
-    right: 18px;
-  }
 }
 
 @media (max-width: 720px) {
@@ -557,6 +573,7 @@ h2 {
     width: 46px !important;
   }
 
+  #3dhop.fullscreen-active #toolbar,
   #3dhop:fullscreen #toolbar,
   #3dhop:-webkit-full-screen #toolbar,
   #3dhop:-moz-full-screen #toolbar,
@@ -564,6 +581,7 @@ h2 {
     width: 46px !important;
   }
 
+  #3dhop.fullscreen-active #toolbar img,
   #3dhop:fullscreen #toolbar img,
   #3dhop:-webkit-full-screen #toolbar img,
   #3dhop:-moz-full-screen #toolbar img,
@@ -573,11 +591,6 @@ h2 {
 
   .viewer-instruction-body {
     padding-left: 0;
-  }
-
-  .duewelsteene-status {
-    left: 62px;
-    max-width: calc(100% - 80px);
   }
 
   .viewer-floating-panel {

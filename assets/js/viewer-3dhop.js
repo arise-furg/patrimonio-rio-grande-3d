@@ -6,28 +6,14 @@ let metadadosVisiveis = false;
 let anotacoesVisiveis = false;
 
 /*
-  Correção atual:
-
-  1. MODEL_ROTATION_X = -90
-     Corrige o modelo que estava "deitado".
-
-  2. MODEL_ROTATION_Y = 0
-     Remove a rotação que estava deixando o edifício de ponta-cabeça.
-
-  3. CAMERA_START_THETA = Math.PI
-     Faz a câmera inicial olhar o outro lado do modelo, corrigindo a vista de costas
-     sem virar o edifício de cabeça para baixo.
-
-  Se ainda aparecer de costas, altere apenas:
-  const CAMERA_START_THETA = Math.PI;
-
-  para:
-  const CAMERA_START_THETA = 0.0;
+  Orientação atual do modelo:
+  - MODEL_ROTATION_X = -90 corrige o modelo exportado "deitado".
+  - CAMERA_START_THETA = Math.PI coloca a câmera no lado frontal.
 */
 
 const MODEL_ROTATION_X = -90;
 const MODEL_ROTATION_Y = 0;
-const MODEL_ROTATION_Z = 180;
+const MODEL_ROTATION_Z = 0;
 
 const CAMERA_START_DISTANCE = 1.15;
 const CAMERA_START_PHI = 0.0;
@@ -46,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   preencherInformacoes(monumento);
   configurarBotoesDaInterface();
   bloquearMenuContextoDoVisualizador();
+  configurarEventosDeTelaCheia();
   iniciar3DHOP(monumento);
 });
 
@@ -68,7 +55,7 @@ function mostrarErroMonumento() {
     "Verifique se o endereço da página contém um identificador válido, por exemplo: monumento.html?id=alfandega"
   );
 
-  definirTexto("viewerStatus", "Erro: monumento não encontrado.");
+  atualizarStatus("Erro: monumento não encontrado.");
 }
 
 function preencherInformacoes(monumento) {
@@ -102,9 +89,7 @@ function iniciar3DHOP(monumento) {
     configurarCena3DHOP(monumento);
     configurarFerramentasDeSecao();
 
-    atualizarStatus(
-      "Modelo carregado. Arraste com o botão esquerdo para rotacionar livremente em 360°."
-    );
+    atualizarStatus("");
 
     setTimeout(() => {
       ajustarResolucaoCanvas();
@@ -119,13 +104,6 @@ function iniciar3DHOP(monumento) {
     window.addEventListener("resize", () => {
       ajustarResolucaoCanvas();
       repintar3DHOP();
-    });
-
-    document.addEventListener("fullscreenchange", () => {
-      setTimeout(() => {
-        ajustarResolucaoCanvas();
-        repintar3DHOP();
-      }, 300);
     });
   } catch (erro) {
     console.error(erro);
@@ -352,7 +330,7 @@ function impedirCapturaParcial3DHOP(elemento) {
 }
 
 function actionsToolbar(action) {
-  if (!window.presenter) {
+  if (!window.presenter && action !== "full" && action !== "full_on") {
     return;
   }
 
@@ -360,7 +338,6 @@ function actionsToolbar(action) {
     resetarCameraInicial();
     desativarMedicao();
     desativarSecoes();
-    atualizarStatus("Modelo recentralizado na visão frontal.");
     repintar3DHOP();
     return;
   }
@@ -372,14 +349,12 @@ function actionsToolbar(action) {
 
   if (action === "zoomin") {
     presenter.zoomIn();
-    atualizarStatus("Zoom aplicado: aproximar.");
     repintar3DHOP();
     return;
   }
 
   if (action === "zoomout") {
     presenter.zoomOut();
-    atualizarStatus("Zoom aplicado: afastar.");
     repintar3DHOP();
     return;
   }
@@ -432,8 +407,6 @@ function abrirPainelMetadados() {
   if (painel) {
     painel.classList.add("is-visible");
   }
-
-  atualizarStatus("Painel de metadados aberto.");
 }
 
 function fecharPainelMetadados() {
@@ -444,8 +417,6 @@ function fecharPainelMetadados() {
   if (painel) {
     painel.classList.remove("is-visible");
   }
-
-  atualizarStatus("Painel de metadados fechado.");
 }
 
 function alternarAnotacoes() {
@@ -458,12 +429,6 @@ function alternarAnotacoes() {
   }
 
   alternarIcone("hotspot", "hotspot_on", anotacoesVisiveis);
-
-  atualizarStatus(
-    anotacoesVisiveis
-      ? "Anotações ativadas."
-      : "Anotações ocultadas."
-  );
 
   repintar3DHOP();
 }
@@ -478,7 +443,6 @@ function fecharPainelAnotacoes() {
   }
 
   alternarIcone("hotspot", "hotspot_on", false);
-  atualizarStatus("Anotações ocultadas.");
   repintar3DHOP();
 }
 
@@ -494,13 +458,6 @@ function alternarControleDeLuz() {
     const novoEstado = !presenter.isLightTrackballEnabled();
     presenter.enableLightTrackball(novoEstado);
     alternarIcone("light", "light_on", novoEstado);
-
-    atualizarStatus(
-      novoEstado
-        ? "Controle de luz ativo. Arraste o mouse para orientar a luz. Clique novamente no ícone para voltar à rotação."
-        : "Controle de luz desativado. Arraste o mouse para rotacionar o modelo."
-    );
-
     repintar3DHOP();
   }
 }
@@ -531,12 +488,6 @@ function alternarMedicao() {
       caixa.style.display = novoEstado ? "table" : "none";
     }
   }
-
-  atualizarStatus(
-    novoEstado
-      ? "Medição ativa. Clique em dois pontos do modelo."
-      : "Medição desativada."
-  );
 
   repintar3DHOP();
 }
@@ -704,7 +655,6 @@ function ativarSecoes() {
     caixa.style.display = "table";
   }
 
-  atualizarStatus("Edição de seções ativada.");
   repintar3DHOP();
 }
 
@@ -790,6 +740,57 @@ function alternarIcone(idOff, idOn, ativo) {
   }
 }
 
+function configurarEventosDeTelaCheia() {
+  document.addEventListener("fullscreenchange", aoMudarTelaCheia);
+  document.addEventListener("webkitfullscreenchange", aoMudarTelaCheia);
+  document.addEventListener("mozfullscreenchange", aoMudarTelaCheia);
+  document.addEventListener("MSFullscreenChange", aoMudarTelaCheia);
+}
+
+function obterElementoTelaCheia() {
+  return (
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.mozFullScreenElement ||
+    document.msFullscreenElement ||
+    null
+  );
+}
+
+function aoMudarTelaCheia() {
+  const viewer = document.getElementById("3dhop");
+  const elementoTelaCheia = obterElementoTelaCheia();
+
+  if (!viewer) {
+    return;
+  }
+
+  if (elementoTelaCheia === viewer) {
+    viewer.classList.add("fullscreen-active");
+    aplicarDimensoesTelaCheia();
+    alternarIcone("full", "full_on", true);
+  } else {
+    viewer.classList.remove("fullscreen-active");
+    limparDimensoesTelaCheia();
+    alternarIcone("full", "full_on", false);
+  }
+
+  setTimeout(() => {
+    ajustarResolucaoCanvas();
+    repintar3DHOP();
+  }, 100);
+
+  setTimeout(() => {
+    ajustarResolucaoCanvas();
+    repintar3DHOP();
+  }, 400);
+
+  setTimeout(() => {
+    ajustarResolucaoCanvas();
+    repintar3DHOP();
+  }, 900);
+}
+
 function alternarTelaCheia() {
   const viewer = document.getElementById("3dhop");
 
@@ -797,11 +798,18 @@ function alternarTelaCheia() {
     return;
   }
 
-  if (!document.fullscreenElement) {
+  const elementoTelaCheia = obterElementoTelaCheia();
+
+  if (!elementoTelaCheia) {
+    viewer.classList.add("fullscreen-active");
+    aplicarDimensoesTelaCheia();
+
     if (viewer.requestFullscreen) {
       viewer.requestFullscreen();
     } else if (viewer.webkitRequestFullscreen) {
       viewer.webkitRequestFullscreen();
+    } else if (viewer.mozRequestFullScreen) {
+      viewer.mozRequestFullScreen();
     } else if (viewer.msRequestFullscreen) {
       viewer.msRequestFullscreen();
     }
@@ -810,15 +818,107 @@ function alternarTelaCheia() {
   } else {
     if (document.exitFullscreen) {
       document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
     }
 
+    viewer.classList.remove("fullscreen-active");
+    limparDimensoesTelaCheia();
     alternarIcone("full", "full_on", false);
   }
 
   setTimeout(() => {
     ajustarResolucaoCanvas();
     repintar3DHOP();
-  }, 300);
+  }, 100);
+
+  setTimeout(() => {
+    ajustarResolucaoCanvas();
+    repintar3DHOP();
+  }, 400);
+
+  setTimeout(() => {
+    ajustarResolucaoCanvas();
+    repintar3DHOP();
+  }, 900);
+}
+
+function aplicarDimensoesTelaCheia() {
+  const viewer = document.getElementById("3dhop");
+  const canvas = document.getElementById("draw-canvas");
+
+  if (viewer) {
+    viewer.style.position = "fixed";
+    viewer.style.left = "0";
+    viewer.style.top = "0";
+    viewer.style.right = "0";
+    viewer.style.bottom = "0";
+    viewer.style.width = "100vw";
+    viewer.style.height = "100vh";
+    viewer.style.minWidth = "100vw";
+    viewer.style.minHeight = "100vh";
+    viewer.style.maxWidth = "100vw";
+    viewer.style.maxHeight = "100vh";
+    viewer.style.margin = "0";
+    viewer.style.padding = "0";
+    viewer.style.zIndex = "999999";
+    viewer.style.overflow = "hidden";
+    viewer.style.background = "#e6e6e6";
+  }
+
+  if (canvas) {
+    canvas.style.position = "absolute";
+    canvas.style.left = "0";
+    canvas.style.top = "0";
+    canvas.style.width = "100vw";
+    canvas.style.height = "100vh";
+    canvas.style.minWidth = "100vw";
+    canvas.style.minHeight = "100vh";
+    canvas.style.maxWidth = "100vw";
+    canvas.style.maxHeight = "100vh";
+    canvas.style.display = "block";
+  }
+}
+
+function limparDimensoesTelaCheia() {
+  const viewer = document.getElementById("3dhop");
+  const canvas = document.getElementById("draw-canvas");
+
+  if (viewer) {
+    viewer.style.position = "";
+    viewer.style.left = "";
+    viewer.style.top = "";
+    viewer.style.right = "";
+    viewer.style.bottom = "";
+    viewer.style.width = "";
+    viewer.style.height = "";
+    viewer.style.minWidth = "";
+    viewer.style.minHeight = "";
+    viewer.style.maxWidth = "";
+    viewer.style.maxHeight = "";
+    viewer.style.margin = "";
+    viewer.style.padding = "";
+    viewer.style.zIndex = "";
+    viewer.style.overflow = "";
+    viewer.style.background = "";
+  }
+
+  if (canvas) {
+    canvas.style.position = "";
+    canvas.style.left = "";
+    canvas.style.top = "";
+    canvas.style.width = "";
+    canvas.style.height = "";
+    canvas.style.minWidth = "";
+    canvas.style.minHeight = "";
+    canvas.style.maxWidth = "";
+    canvas.style.maxHeight = "";
+    canvas.style.display = "";
+  }
 }
 
 function bloquearMenuContextoDoVisualizador() {
@@ -841,14 +941,25 @@ function bloquearMenuContextoDoVisualizador() {
 }
 
 function ajustarResolucaoCanvas() {
+  const viewer = document.getElementById("3dhop");
   const canvas = document.getElementById("draw-canvas");
 
   if (!canvas) {
     return;
   }
 
-  const larguraVisual = canvas.clientWidth;
-  const alturaVisual = canvas.clientHeight;
+  const emTelaCheia =
+    viewer &&
+    (viewer.classList.contains("fullscreen-active") || obterElementoTelaCheia() === viewer);
+
+  let larguraVisual = canvas.clientWidth;
+  let alturaVisual = canvas.clientHeight;
+
+  if (emTelaCheia) {
+    larguraVisual = window.innerWidth;
+    alturaVisual = window.innerHeight;
+  }
+
   const proporcaoTela = window.devicePixelRatio || 1;
 
   if (larguraVisual <= 0 || alturaVisual <= 0) {
@@ -858,8 +969,13 @@ function ajustarResolucaoCanvas() {
   canvas.width = Math.floor(larguraVisual * proporcaoTela);
   canvas.height = Math.floor(alturaVisual * proporcaoTela);
 
-  canvas.style.width = `${larguraVisual}px`;
-  canvas.style.height = `${alturaVisual}px`;
+  if (emTelaCheia) {
+    canvas.style.width = "100vw";
+    canvas.style.height = "100vh";
+  } else {
+    canvas.style.width = `${larguraVisual}px`;
+    canvas.style.height = `${alturaVisual}px`;
+  }
 }
 
 function repintar3DHOP() {
@@ -880,6 +996,6 @@ function atualizarStatus(texto) {
   const status = document.getElementById("viewerStatus");
 
   if (status) {
-    status.textContent = texto;
+    status.textContent = texto || "";
   }
 }
