@@ -25,9 +25,9 @@ let anotacoesVisiveis = false;
   const CAMERA_START_THETA = 0.0;
 */
 
-const MODEL_ROTATION_X = 0;
+const MODEL_ROTATION_X = -90;
 const MODEL_ROTATION_Y = 0;
-const MODEL_ROTATION_Z = 0;
+const MODEL_ROTATION_Z = 180;
 
 const CAMERA_START_DISTANCE = 1.15;
 const CAMERA_START_PHI = 0.0;
