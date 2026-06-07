@@ -6,25 +6,32 @@ let metadadosVisiveis = false;
 let anotacoesVisiveis = false;
 
 /*
-  Ajustes de orientação do modelo.
+  Correção atual:
 
-  Situação atual:
-  - MODEL_ROTATION_X = -90 corrigiu o modelo "deitado".
-  - MODEL_ROTATION_Y = 180 corrige a fachada que estava aparecendo de costas.
+  1. MODEL_ROTATION_X = -90
+     Corrige o modelo que estava "deitado".
 
-  Se futuramente outro modelo aparecer invertido, os principais valores para testar são:
-  - MODEL_ROTATION_Y = 0;
-  - MODEL_ROTATION_Y = 180;
-  - MODEL_ROTATION_Z = 180;
+  2. MODEL_ROTATION_Y = 0
+     Remove a rotação que estava deixando o edifício de ponta-cabeça.
+
+  3. CAMERA_START_THETA = Math.PI
+     Faz a câmera inicial olhar o outro lado do modelo, corrigindo a vista de costas
+     sem virar o edifício de cabeça para baixo.
+
+  Se ainda aparecer de costas, altere apenas:
+  const CAMERA_START_THETA = Math.PI;
+
+  para:
+  const CAMERA_START_THETA = 0.0;
 */
 
 const MODEL_ROTATION_X = -90;
-const MODEL_ROTATION_Y = 180;
+const MODEL_ROTATION_Y = 0;
 const MODEL_ROTATION_Z = 0;
 
 const CAMERA_START_DISTANCE = 1.15;
 const CAMERA_START_PHI = 0.0;
-const CAMERA_START_THETA = 0.0;
+const CAMERA_START_THETA = Math.PI;
 
 document.addEventListener("DOMContentLoaded", () => {
   const monumento = obterMonumentoAtual();
