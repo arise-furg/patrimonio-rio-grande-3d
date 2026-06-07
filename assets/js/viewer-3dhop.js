@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   preencherInformacoes(monumento);
-  configurarBotoes();
+  configurarBotoesExternos();
   iniciarVisualizador3DHOP(monumento);
 });
 
@@ -26,22 +26,12 @@ function obterMonumentoAtual() {
 }
 
 function mostrarErroMonumento() {
-  const titulo = document.getElementById("viewerTitulo");
-  const resumo = document.getElementById("viewerResumo");
-  const status = document.getElementById("viewerStatus");
-
-  if (titulo) {
-    titulo.textContent = "Monumento não encontrado";
-  }
-
-  if (resumo) {
-    resumo.textContent =
-      "Verifique se o endereço da página contém um identificador válido, por exemplo: monumento.html?id=alfandega";
-  }
-
-  if (status) {
-    status.textContent = "Erro: monumento não encontrado.";
-  }
+  definirTexto("viewerTitulo", "Monumento não encontrado");
+  definirTexto(
+    "viewerResumo",
+    "Verifique se o endereço da página contém um identificador válido, por exemplo: monumento.html?id=alfandega"
+  );
+  definirTexto("viewerStatus", "Erro: monumento não encontrado.");
 }
 
 function preencherInformacoes(monumento) {
@@ -65,33 +55,19 @@ function definirTexto(id, texto) {
   }
 }
 
-function configurarBotoes() {
+function configurarBotoesExternos() {
   const btnResetCamera = document.getElementById("btnResetCamera");
   const btnFullscreen = document.getElementById("btnFullscreen");
 
   if (btnResetCamera) {
     btnResetCamera.addEventListener("click", () => {
-      if (window.presenter && typeof window.presenter.resetTrackball === "function") {
-        window.presenter.resetTrackball();
-      }
+      resetarModelo3DHOP();
     });
   }
 
   if (btnFullscreen) {
     btnFullscreen.addEventListener("click", () => {
-      const viewer = document.getElementById("3dhop");
-
-      if (!viewer) {
-        return;
-      }
-
-      if (viewer.requestFullscreen) {
-        viewer.requestFullscreen();
-      } else if (viewer.webkitRequestFullscreen) {
-        viewer.webkitRequestFullscreen();
-      } else if (viewer.msRequestFullscreen) {
-        viewer.msRequestFullscreen();
-      }
+      abrirTelaCheia3DHOP();
     });
   }
 }
@@ -132,7 +108,7 @@ function iniciarVisualizador3DHOP(monumento) {
 
         trackOptions: {
           startDistance: 2.5,
-          minMaxDist: [0.2, 20.0],
+          minMaxDist: [0.2, 30.0],
           startPhi: 0.0,
           startTheta: 0.0,
           startPanX: 0.0,
@@ -149,19 +125,13 @@ function iniciarVisualizador3DHOP(monumento) {
 
     window.addEventListener("resize", () => {
       ajustarResolucaoCanvas();
-
-      if (window.presenter && typeof window.presenter.repaint === "function") {
-        window.presenter.repaint();
-      }
+      repintar3DHOP();
     });
 
     document.addEventListener("fullscreenchange", () => {
       setTimeout(() => {
         ajustarResolucaoCanvas();
-
-        if (window.presenter && typeof window.presenter.repaint === "function") {
-          window.presenter.repaint();
-        }
+        repintar3DHOP();
       }, 300);
     });
 
@@ -198,4 +168,111 @@ function ajustarResolucaoCanvas() {
 
   canvas.style.width = `${larguraVisual}px`;
   canvas.style.height = `${alturaVisual}px`;
+}
+
+function repintar3DHOP() {
+  if (window.presenter && typeof window.presenter.repaint === "function") {
+    window.presenter.repaint();
+  }
+}
+
+/* Funções da barra personalizada */
+
+function resetarModelo3DHOP() {
+  if (!window.presenter) {
+    return;
+  }
+
+  if (typeof window.presenter.resetTrackball === "function") {
+    window.presenter.resetTrackball();
+  } else if (typeof window.presenter.reset === "function") {
+    window.presenter.reset();
+  }
+
+  repintar3DHOP();
+}
+
+function aproximarModelo3DHOP() {
+  if (!window.presenter) {
+    return;
+  }
+
+  if (typeof window.presenter.zoomIn === "function") {
+    window.presenter.zoomIn();
+  } else if (
+    window.presenter._scene &&
+    window.presenter._scene.trackball &&
+    typeof window.presenter._scene.trackball.scale === "function"
+  ) {
+    window.presenter._scene.trackball.scale(0.85);
+  }
+
+  repintar3DHOP();
+}
+
+function afastarModelo3DHOP() {
+  if (!window.presenter) {
+    return;
+  }
+
+  if (typeof window.presenter.zoomOut === "function") {
+    window.presenter.zoomOut();
+  } else if (
+    window.presenter._scene &&
+    window.presenter._scene.trackball &&
+    typeof window.presenter._scene.trackball.scale === "function"
+  ) {
+    window.presenter._scene.trackball.scale(1.15);
+  }
+
+  repintar3DHOP();
+}
+
+function alternarLuz3DHOP() {
+  if (!window.presenter) {
+    return;
+  }
+
+  if (typeof window.presenter.toggleLightTrackball === "function") {
+    window.presenter.toggleLightTrackball();
+  } else if (typeof window.presenter.enableLightTrackball === "function") {
+    window.presenter.enableLightTrackball(true);
+  }
+
+  repintar3DHOP();
+}
+
+function ativarMedicao3DHOP() {
+  if (!window.presenter) {
+    return;
+  }
+
+  if (typeof window.presenter.enableMeasurementTool === "function") {
+    window.presenter.enableMeasurementTool(true);
+  } else {
+    alert("A ferramenta de medição não está disponível nesta configuração do 3DHOP.");
+  }
+
+  repintar3DHOP();
+}
+
+function abrirTelaCheia3DHOP() {
+  const viewer = document.getElementById("3dhop");
+
+  if (!viewer) {
+    return;
+  }
+
+  if (viewer.requestFullscreen) {
+    viewer.requestFullscreen();
+  } else if (viewer.webkitRequestFullscreen) {
+    viewer.webkitRequestFullscreen();
+  } else if (viewer.msRequestFullscreen) {
+    viewer.msRequestFullscreen();
+  }
+
+  setTimeout(() => {
+    ajustarResolucaoCanvas();
+    repintar3DHOP();
+  }, 300);
 }

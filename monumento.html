@@ -6,10 +6,10 @@
 
   <title>Visualização 3D · Patrimônio Rio Grande</title>
 
-  <!-- CSS geral do seu site -->
+  <!-- CSS geral do site -->
   <link rel="stylesheet" href="assets/css/style.css" />
 
-  <!-- CSS do 3DHOP -->
+  <!-- CSS interno do 3DHOP -->
   <link rel="stylesheet" href="3dhop/stylesheet/3dhop.css" />
   <link rel="stylesheet" href="3dhop/stylesheet/3dhop_panels.css" />
 </head>
@@ -34,16 +34,29 @@
       <div class="container viewer-hero-content">
         <div>
           <p class="section-label" id="viewerCategoria">Monumento histórico</p>
+
           <h1 id="viewerTitulo">Carregando monumento...</h1>
+
           <p id="viewerResumo">
             Aguarde enquanto as informações do monumento são carregadas.
           </p>
         </div>
 
         <div class="viewer-meta">
-          <p><strong>Período:</strong> <span id="viewerPeriodo">—</span></p>
-          <p><strong>Tipologia:</strong> <span id="viewerTipologia">—</span></p>
-          <p><strong>Característica:</strong> <span id="viewerCaracteristica">—</span></p>
+          <p>
+            <strong>Período:</strong>
+            <span id="viewerPeriodo">—</span>
+          </p>
+
+          <p>
+            <strong>Tipologia:</strong>
+            <span id="viewerTipologia">—</span>
+          </p>
+
+          <p>
+            <strong>Característica:</strong>
+            <span id="viewerCaracteristica">—</span>
+          </p>
         </div>
       </div>
     </section>
@@ -73,6 +86,14 @@
         </div>
 
         <div class="notice">
+          <h3>Ferramentas do visualizador</h3>
+          <p>
+            A barra sobre a área 3D permite recentralizar, aproximar, afastar,
+            alternar luz, ativar medição e abrir em tela cheia.
+          </p>
+        </div>
+
+        <div class="notice">
           <h3>Observação técnica</h3>
           <p>
             Caso o modelo não carregue, verifique se o arquivo <code>.nxs</code>
@@ -87,6 +108,69 @@
         </div>
 
         <div id="3dhop" class="tdhop viewer-box">
+          <!-- Barra personalizada de ferramentas -->
+          <div id="toolbar" class="toolbar-3dhop-custom">
+            <button
+              class="tool-button"
+              type="button"
+              title="Recentralizar modelo"
+              aria-label="Recentralizar modelo"
+              onclick="resetarModelo3DHOP()"
+            >
+              ⌂
+            </button>
+
+            <button
+              class="tool-button"
+              type="button"
+              title="Aproximar"
+              aria-label="Aproximar"
+              onclick="aproximarModelo3DHOP()"
+            >
+              +
+            </button>
+
+            <button
+              class="tool-button"
+              type="button"
+              title="Afastar"
+              aria-label="Afastar"
+              onclick="afastarModelo3DHOP()"
+            >
+              −
+            </button>
+
+            <button
+              class="tool-button"
+              type="button"
+              title="Alternar luz"
+              aria-label="Alternar luz"
+              onclick="alternarLuz3DHOP()"
+            >
+              ☀
+            </button>
+
+            <button
+              class="tool-button"
+              type="button"
+              title="Ativar medição"
+              aria-label="Ativar medição"
+              onclick="ativarMedicao3DHOP()"
+            >
+              ⟷
+            </button>
+
+            <button
+              class="tool-button"
+              type="button"
+              title="Tela cheia"
+              aria-label="Tela cheia"
+              onclick="abrirTelaCheia3DHOP()"
+            >
+              ⛶
+            </button>
+          </div>
+
           <canvas id="draw-canvas"></canvas>
         </div>
       </section>
@@ -95,6 +179,7 @@
     <section class="section">
       <div class="container">
         <p class="section-label">Contexto patrimonial</p>
+
         <h2>Uso público do modelo digital</h2>
 
         <p id="viewerUsoPublico"></p>
@@ -110,17 +195,19 @@
   </footer>
 
   <!-- Bibliotecas do 3DHOP -->
-<script src="3dhop/js/spidergl.js"></script>
-<script src="3dhop/js/jquery.js"></script>
-<script src="3dhop/js/presenter.js"></script>
-<script src="3dhop/js/nexus.js"></script>
-<script src="3dhop/js/trackball_turntable.js"></script>
-<script src="3dhop/js/trackball_pantilt.js"></script>
-<script src="3dhop/js/trackball_sphere.js"></script>
-<script src="3dhop/js/3dhop.js"></script>
+  <script src="3dhop/js/spidergl.js"></script>
+  <script src="3dhop/js/jquery.js"></script>
+  <script src="3dhop/js/presenter.js"></script>
+  <script src="3dhop/js/nexus.js"></script>
+  <script src="3dhop/js/ply.js"></script>
+  <script src="3dhop/js/trackball_turntable.js"></script>
+  <script src="3dhop/js/trackball_turntable_pan.js"></script>
+  <script src="3dhop/js/trackball_pantilt.js"></script>
+  <script src="3dhop/js/trackball_sphere.js"></script>
+  <script src="3dhop/js/init.js"></script>
 
-<!-- Scripts do site -->
-<script src="assets/js/dados-monumentos.js"></script>
-<script src="assets/js/viewer-3dhop.js"></script>
+  <!-- Scripts do site -->
+  <script src="assets/js/dados-monumentos.js"></script>
+  <script src="assets/js/viewer-3dhop.js"></script>
 </body>
 </html>
