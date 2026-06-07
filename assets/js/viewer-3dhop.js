@@ -29,7 +29,7 @@ const MODEL_ROTATION_Z = 0;
 
 const CAMERA_START_DISTANCE = 1.15;
 const CAMERA_START_PHI = 0.0;
-const CAMERA_START_THETA = 0.001;
+const CAMERA_START_THETA = Math.PI;
 
 document.addEventListener("DOMContentLoaded", () => {
   const monumento = obterMonumentoAtual();
