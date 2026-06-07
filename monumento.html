@@ -6,10 +6,8 @@
 
   <title>Visualização 3D · Patrimônio Rio Grande</title>
 
-  <!-- CSS geral do site -->
   <link rel="stylesheet" href="assets/css/style.css" />
 
-  <!-- CSS interno do 3DHOP -->
   <link rel="stylesheet" href="3dhop/stylesheet/3dhop.css" />
   <link rel="stylesheet" href="3dhop/stylesheet/3dhop_panels.css" />
 </head>
@@ -83,7 +81,7 @@
         <div id="3dhop" class="tdhop duewelsteene-viewer" oncontextmenu="return false;">
           <div id="tdhlg"></div>
 
-          <div id="toolbar">
+          <div id="toolbar" class="toolbar-native">
             <img
               id="home"
               title="Recentralizar modelo"
@@ -186,11 +184,11 @@
           <div id="measure-box" class="output-box">
             Distância medida
             <hr />
-            <span id="measure-output" class="output-text" onmousedown="event.stopPropagation()">0.00 m</span>
+            <span id="measure-output" class="output-text">0.00 m</span>
           </div>
 
           <div id="sections-box" class="output-box">
-            <table class="output-table" onmousedown="event.stopPropagation()">
+            <table class="output-table">
               <tr>
                 <td>Plano</td>
                 <td>Posição</td>
@@ -276,7 +274,7 @@
               </tr>
             </table>
 
-            <table class="output-table" onmousedown="event.stopPropagation()" style="text-align:right;">
+            <table class="output-table output-table-secondary">
               <tr>
                 <td>
                   Mostrar planos
@@ -294,7 +292,7 @@
           </div>
 
           <div id="metadata-panel" class="viewer-floating-panel">
-            <button class="floating-panel-close" type="button" onclick="fecharPainelMetadados()">×</button>
+            <button class="floating-panel-close" type="button" id="metadata-close">×</button>
             <h3>Metadados</h3>
 
             <p>
@@ -329,7 +327,7 @@
           </div>
 
           <div id="annotations-panel" class="viewer-floating-panel annotations-panel">
-            <button class="floating-panel-close" type="button" onclick="fecharPainelAnotacoes()">×</button>
+            <button class="floating-panel-close" type="button" id="annotations-close">×</button>
             <h3>Anotações</h3>
 
             <p>
@@ -388,7 +386,6 @@
     </div>
   </footer>
 
-  <!-- Bibliotecas do 3DHOP -->
   <script src="3dhop/js/spidergl.js"></script>
   <script src="3dhop/js/jquery.js"></script>
   <script src="3dhop/js/presenter.js"></script>
@@ -400,7 +397,6 @@
   <script src="3dhop/js/trackball_sphere.js"></script>
   <script src="3dhop/js/init.js"></script>
 
-  <!-- Scripts do site -->
   <script src="assets/js/dados-monumentos.js"></script>
   <script src="assets/js/viewer-3dhop.js"></script>
 </body>

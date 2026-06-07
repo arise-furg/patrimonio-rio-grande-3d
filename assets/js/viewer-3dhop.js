@@ -4,7 +4,22 @@ window.presenter = presenter;
 let monumentoAtual = null;
 let metadadosVisiveis = false;
 let anotacoesVisiveis = false;
-let hotspotsVisiveis = false;
+
+/*
+  Ajustes centrais da câmera inicial.
+
+  Para alterar a posição inicial depois:
+  - Aumente CAMERA_START_DISTANCE para afastar o modelo.
+  - Diminua CAMERA_START_DISTANCE para aproximar o modelo.
+  - Altere CAMERA_START_PHI para inclinar a visão.
+  - Altere CAMERA_START_THETA para girar horizontalmente.
+
+  A configuração abaixo força uma visão mais frontal e com mais zoom
+  do que a versão anterior.
+*/
+const CAMERA_START_DISTANCE = 1.35;
+const CAMERA_START_PHI = -0.22;
+const CAMERA_START_THETA = -1.57;
 
 document.addEventListener("DOMContentLoaded", () => {
   const monumento = obterMonumentoAtual();
@@ -76,7 +91,7 @@ function iniciar3DHOP(monumento) {
     configurarFerramentasDeSecao();
 
     atualizarStatus(
-      "Modelo carregado. Use a barra lateral para navegar, medir, anotar e editar seções."
+      "Modelo carregado. Arraste com o botão esquerdo para rotacionar livremente em 360°."
     );
 
     setTimeout(() => {
@@ -113,6 +128,10 @@ function configurarCena3DHOP(monumento) {
   presenter = new Presenter("draw-canvas");
   window.presenter = presenter;
 
+  /*
+    SphereTrackball é usado para permitir rotação livre em 360 graus
+    com o botão esquerdo do mouse.
+  */
   presenter.setScene({
     meshes: {
       modelo_principal: {
@@ -127,24 +146,18 @@ function configurarCena3DHOP(monumento) {
     },
 
     trackball: {
-      type: TurntablePanTrackball,
+      type: SphereTrackball,
 
       trackOptions: {
-        startPhi: 0.0,
-        startTheta: 0.0,
-        startDistance: 2.5,
+        startPhi: CAMERA_START_PHI,
+        startTheta: CAMERA_START_THETA,
+        startDistance: CAMERA_START_DISTANCE,
 
         startPanX: 0.0,
         startPanY: 0.0,
         startPanZ: 0.0,
 
-        minMaxPhi: [-180.0, 180.0],
-        minMaxTheta: [-180.0, 180.0],
-        minMaxDist: [0.2, 80.0],
-
-        minMaxPanX: [-20.0, 20.0],
-        minMaxPanY: [-20.0, 20.0],
-        minMaxPanZ: [-20.0, 20.0]
+        minMaxDist: [0.1, 80.0]
       }
     },
 
@@ -165,18 +178,6 @@ function configurarCena3DHOP(monumento) {
     presenter.enableSceneLighting(true);
   }
 
-  if (typeof lightSwitch === "function") {
-    lightSwitch(false);
-  }
-
-  if (typeof measureSwitch === "function") {
-    measureSwitch(false);
-  }
-
-  if (typeof sectiontoolSwitch === "function") {
-    sectiontoolSwitch(false);
-  }
-
   if (typeof presenter.enableMeasurementTool === "function") {
     presenter.enableMeasurementTool(false);
   }
@@ -184,37 +185,102 @@ function configurarCena3DHOP(monumento) {
   if (typeof presenter.enableLightTrackball === "function") {
     presenter.enableLightTrackball(false);
   }
+
+  if (typeof measureSwitch === "function") {
+    measureSwitch(false);
+  }
+
+  if (typeof lightSwitch === "function") {
+    lightSwitch(false);
+  }
+
+  if (typeof sectiontoolSwitch === "function") {
+    sectiontoolSwitch(false);
+  }
 }
 
 function configurarBotoesDaInterface() {
-  vincularClique("home", () => actionsToolbar("home"));
-  vincularClique("info", () => actionsToolbar("info"));
-  vincularClique("zoomin", () => actionsToolbar("zoomin"));
-  vincularClique("zoomout", () => actionsToolbar("zoomout"));
-  vincularClique("light", () => actionsToolbar("light"));
-  vincularClique("light_on", () => actionsToolbar("light_on"));
-  vincularClique("measure", () => actionsToolbar("measure"));
-  vincularClique("measure_on", () => actionsToolbar("measure_on"));
-  vincularClique("hotspot", () => actionsToolbar("hotspot"));
-  vincularClique("hotspot_on", () => actionsToolbar("hotspot_on"));
-  vincularClique("sections", () => actionsToolbar("sections"));
-  vincularClique("sections_on", () => actionsToolbar("sections_on"));
-  vincularClique("full", () => actionsToolbar("full"));
-  vincularClique("full_on", () => actionsToolbar("full_on"));
+  vincularCliquePersistente("home", () => actionsToolbar("home"));
+  vincularCliquePersistente("info", () => actionsToolbar("info"));
+  vincularCliquePersistente("zoomin", () => actionsToolbar("zoomin"));
+  vincularCliquePersistente("zoomout", () => actionsToolbar("zoomout"));
+  vincularCliquePersistente("light", () => actionsToolbar("light"));
+  vincularCliquePersistente("light_on", () => actionsToolbar("light_on"));
+  vincularCliquePersistente("measure", () => actionsToolbar("measure"));
+  vincularCliquePersistente("measure_on", () => actionsToolbar("measure_on"));
+  vincularCliquePersistente("hotspot", () => actionsToolbar("hotspot"));
+  vincularCliquePersistente("hotspot_on", () => actionsToolbar("hotspot_on"));
+  vincularCliquePersistente("sections", () => actionsToolbar("sections"));
+  vincularCliquePersistente("sections_on", () => actionsToolbar("sections_on"));
+  vincularCliquePersistente("full", () => actionsToolbar("full"));
+  vincularCliquePersistente("full_on", () => actionsToolbar("full_on"));
+
+  vincularCliquePersistente("metadata-close", () => fecharPainelMetadados());
+  vincularCliquePersistente("annotations-close", () => fecharPainelAnotacoes());
+
+  const metadataPanel = document.getElementById("metadata-panel");
+  const annotationsPanel = document.getElementById("annotations-panel");
+
+  impedirCaptura3DHOP(metadataPanel);
+  impedirCaptura3DHOP(annotationsPanel);
+
+  document.querySelectorAll("#toolbar img").forEach((icone) => {
+    impedirCaptura3DHOP(icone);
+  });
 }
 
-function vincularClique(id, funcao) {
+function vincularCliquePersistente(id, funcao) {
   const elemento = document.getElementById(id);
 
   if (!elemento) {
     return;
   }
 
-  elemento.addEventListener("click", (evento) => {
-    evento.preventDefault();
-    evento.stopPropagation();
-    funcao();
-  });
+  elemento.addEventListener(
+    "mousedown",
+    (evento) => {
+      evento.preventDefault();
+      evento.stopPropagation();
+    },
+    true
+  );
+
+  elemento.addEventListener(
+    "mouseup",
+    (evento) => {
+      evento.preventDefault();
+      evento.stopPropagation();
+    },
+    true
+  );
+
+  elemento.addEventListener(
+    "click",
+    (evento) => {
+      evento.preventDefault();
+      evento.stopPropagation();
+      funcao();
+    },
+    true
+  );
+}
+
+function impedirCaptura3DHOP(elemento) {
+  if (!elemento) {
+    return;
+  }
+
+  ["mousedown", "mouseup", "mousemove", "click", "dblclick", "wheel", "touchstart", "touchmove", "touchend"].forEach(
+    (tipoEvento) => {
+      elemento.addEventListener(
+        tipoEvento,
+        (evento) => {
+          evento.stopPropagation();
+        },
+        true
+      );
+    }
+  );
 }
 
 function actionsToolbar(action) {
@@ -223,16 +289,16 @@ function actionsToolbar(action) {
   }
 
   if (action === "home") {
-    presenter.resetTrackball();
+    resetarCameraInicial();
     desativarMedicao();
     desativarSecoes();
-    atualizarStatus("Modelo recentralizado.");
+    atualizarStatus("Modelo recentralizado na visão frontal.");
     repintar3DHOP();
     return;
   }
 
   if (action === "info") {
-    alternarPainelMetadados();
+    abrirPainelMetadados();
     return;
   }
 
@@ -276,20 +342,34 @@ function actionsToolbar(action) {
   }
 }
 
-function alternarPainelMetadados() {
-  metadadosVisiveis = !metadadosVisiveis;
+function resetarCameraInicial() {
+  if (!window.presenter) {
+    return;
+  }
+
+  /*
+    Para a visão inicial personalizada, recriamos a cena mantendo
+    o mesmo modelo. Isso evita voltar para a orientação padrão top-view.
+  */
+  configurarCena3DHOP(monumentoAtual);
+  configurarFerramentasDeSecao();
+
+  setTimeout(() => {
+    ajustarResolucaoCanvas();
+    repintar3DHOP();
+  }, 100);
+}
+
+function abrirPainelMetadados() {
+  metadadosVisiveis = true;
 
   const painel = document.getElementById("metadata-panel");
 
   if (painel) {
-    painel.classList.toggle("is-visible", metadadosVisiveis);
+    painel.classList.add("is-visible");
   }
 
-  atualizarStatus(
-    metadadosVisiveis
-      ? "Painel de metadados aberto."
-      : "Painel de metadados fechado."
-  );
+  atualizarStatus("Painel de metadados aberto.");
 }
 
 function fecharPainelMetadados() {
@@ -306,7 +386,6 @@ function fecharPainelMetadados() {
 
 function alternarAnotacoes() {
   anotacoesVisiveis = !anotacoesVisiveis;
-  hotspotsVisiveis = anotacoesVisiveis;
 
   const painel = document.getElementById("annotations-panel");
 
@@ -315,22 +394,6 @@ function alternarAnotacoes() {
   }
 
   alternarIcone("hotspot", "hotspot_on", anotacoesVisiveis);
-
-  if (typeof presenter.toggleSpotVisibility === "function") {
-    try {
-      presenter.toggleSpotVisibility(HOP_ALL, true);
-    } catch (erro) {
-      console.warn("Hotspots 3D não configurados para este modelo.", erro);
-    }
-  }
-
-  if (typeof presenter.enableOnHover === "function") {
-    try {
-      presenter.enableOnHover(anotacoesVisiveis);
-    } catch (erro) {
-      console.warn("Hover de hotspots não configurado para este modelo.", erro);
-    }
-  }
 
   atualizarStatus(
     anotacoesVisiveis
@@ -343,7 +406,6 @@ function alternarAnotacoes() {
 
 function fecharPainelAnotacoes() {
   anotacoesVisiveis = false;
-  hotspotsVisiveis = false;
 
   const painel = document.getElementById("annotations-panel");
 
@@ -398,8 +460,12 @@ function alternarMedicao() {
     measureSwitch(novoEstado);
   } else {
     alternarIcone("measure", "measure_on", novoEstado);
+
     const caixa = document.getElementById("measure-box");
-    if (caixa) caixa.style.display = novoEstado ? "table" : "none";
+
+    if (caixa) {
+      caixa.style.display = novoEstado ? "table" : "none";
+    }
   }
 
   atualizarStatus(
@@ -422,8 +488,12 @@ function desativarMedicao() {
     measureSwitch(false);
   } else {
     alternarIcone("measure", "measure_on", false);
+
     const caixa = document.getElementById("measure-box");
-    if (caixa) caixa.style.display = "none";
+
+    if (caixa) {
+      caixa.style.display = "none";
+    }
   }
 }
 
@@ -565,14 +635,6 @@ function ativarSecoes() {
     caixa.style.display = "table";
   }
 
-  const xplane = document.getElementById("xplane");
-  const yplane = document.getElementById("yplane");
-  const zplane = document.getElementById("zplane");
-
-  if (xplane) xplane.style.visibility = "visible";
-  if (yplane) yplane.style.visibility = "visible";
-  if (zplane) zplane.style.visibility = "visible";
-
   atualizarStatus("Edição de seções ativada.");
   repintar3DHOP();
 }
@@ -610,10 +672,9 @@ function sectionzSwitch(forcarAtivo) {
 }
 
 function alternarPlano(eixo, forcarAtivo) {
-  const imgOff = document.getElementById(`${eixo}plane`);
-  const imgOn = document.getElementById(`${eixo}plane_on`);
-
   let ativo = true;
+
+  const imgOff = document.getElementById(`${eixo}plane`);
 
   if (typeof forcarAtivo === "boolean") {
     ativo = forcarAtivo;

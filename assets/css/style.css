@@ -249,8 +249,9 @@ h2 {
   position: absolute !important;
   top: 10px !important;
   left: 10px !important;
-  z-index: 90 !important;
+  z-index: 120 !important;
   width: 54px;
+  pointer-events: auto;
 }
 
 #toolbar img {
@@ -264,6 +265,7 @@ h2 {
   padding: 0;
   border: 0;
   cursor: pointer;
+  pointer-events: auto;
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
@@ -283,7 +285,7 @@ h2 {
 /* CAIXAS NATIVAS DO 3DHOP */
 
 .output-box {
-  z-index: 95 !important;
+  z-index: 125 !important;
   background: rgba(255, 255, 255, 0.96) !important;
   border: 1px solid #c9d6dc !important;
   border-radius: 8px !important;
@@ -313,6 +315,10 @@ h2 {
   cursor: pointer;
 }
 
+.output-table-secondary {
+  text-align: right;
+}
+
 .output-input {
   max-width: 120px;
 }
@@ -323,7 +329,7 @@ h2 {
   position: absolute;
   right: 18px;
   top: 18px;
-  z-index: 98;
+  z-index: 140;
   width: 320px;
   max-width: calc(100% - 100px);
   max-height: 80%;
@@ -336,6 +342,7 @@ h2 {
   color: #263f46;
   padding: 18px;
   font-size: 0.92rem;
+  pointer-events: auto;
 }
 
 .viewer-floating-panel.is-visible {
@@ -393,41 +400,6 @@ h2 {
   border-radius: var(--radius);
   padding: 24px;
   box-shadow: var(--shadow);
-}
-
-/* BOTÕES GERAIS */
-
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 0 20px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  font-weight: 700;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.button:hover {
-  transform: translateY(-2px);
-}
-
-.button.primary {
-  background: var(--color-primary);
-  color: white;
-}
-
-.button.secondary {
-  background: transparent;
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.button.full {
-  width: 100%;
-  margin-bottom: 10px;
 }
 
 /* RODAPÉ */
