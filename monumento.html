@@ -30,7 +30,7 @@
   </header>
 
   <main>
-    <section class="viewer-hero compact-viewer-hero">
+    <section class="viewer-hero duewelsteene-hero">
       <div class="container viewer-hero-content">
         <div>
           <p class="section-label" id="viewerCategoria">Monumento histórico</p>
@@ -61,58 +61,18 @@
       </div>
     </section>
 
-    <section class="viewer-layout duewelsteene-layout">
-      <aside class="viewer-sidebar duewelsteene-sidebar">
-        <h2>Informações</h2>
-
-        <p id="viewerDescricao"></p>
-
-        <div class="viewer-actions">
-          <button class="button primary full" id="btnResetCamera" type="button">
-            Recentralizar modelo
-          </button>
-
-          <button class="button secondary full" id="btnFullscreen" type="button">
-            Tela cheia
-          </button>
-        </div>
-
-        <div class="notice">
-          <h3>Navegação</h3>
-          <p>
-            Use o mouse para rotacionar o modelo. Use a roda do mouse ou os botões
-            de lupa para aproximar e afastar.
-          </p>
-        </div>
-
-        <div class="notice">
-          <h3>Ferramentas</h3>
-          <p>
-            A barra lateral do visualizador permite recentralizar, aproximar,
-            afastar, controlar a luz, medir distâncias e abrir em tela cheia.
-          </p>
-        </div>
-
-        <div class="notice">
-          <h3>Medição</h3>
-          <p>
-            Clique no ícone de régua e selecione dois pontos no modelo. A medida
-            será exibida em metros se o modelo tiver sido exportado em escala métrica.
-          </p>
-        </div>
-      </aside>
-
-      <section class="viewer-canvas-area duewelsteene-canvas-area">
+    <section class="duewelsteene-viewer-section">
+      <div class="duewelsteene-viewer-wrap">
         <div class="viewer-instruction-panel">
           <div class="viewer-instruction-header">
-            <span class="viewer-instruction-icon">ℹ</span>
+            <span class="viewer-instruction-icon">i</span>
             <span>Navegando no modelo 3D</span>
           </div>
 
           <div class="viewer-instruction-body">
             Aguarde até que o modelo esteja visível. Para melhor funcionamento,
-            use um navegador atualizado. A barra à esquerda contém as ferramentas
-            principais do 3DHOP.
+            utilize um navegador atualizado. A barra à esquerda contém as
+            ferramentas principais do visualizador.
           </div>
         </div>
 
@@ -120,60 +80,105 @@
           Carregando visualizador 3D...
         </div>
 
-        <div id="3dhop" class="tdhop duewelsteene-viewer" onmousedown="if (event.preventDefault) event.preventDefault()" oncontextmenu="return false;">
+        <div id="3dhop" class="tdhop duewelsteene-viewer" oncontextmenu="return false;">
           <div id="tdhlg"></div>
 
           <div id="toolbar">
-            <img id="home" title="Recentralizar modelo" src="3dhop/skins/dark/home.png" /><br />
-
-            <img id="zoomin" title="Aproximar" src="3dhop/skins/dark/zoomin.png" /><br />
-            <img id="zoomout" title="Afastar" src="3dhop/skins/dark/zoomout.png" /><br />
+            <img
+              id="home"
+              title="Recentralizar modelo"
+              alt="Home"
+              src="3dhop/skins/dark/home.png"
+            /><br />
 
             <img
-              id="lighting_off"
-              title="Ligar iluminação"
-              src="3dhop/skins/dark/lighting_off.png"
-              style="position:absolute; visibility:hidden;"
-            />
+              id="info"
+              title="Metadados"
+              alt="Metadados"
+              src="3dhop/skins/dark/meta.png"
+            /><br />
+
             <img
-              id="lighting"
-              title="Desligar iluminação"
-              src="3dhop/skins/dark/lighting.png"
+              id="zoomin"
+              title="Aproximar"
+              alt="Aproximar"
+              src="3dhop/skins/dark/zoomin.png"
+            /><br />
+
+            <img
+              id="zoomout"
+              title="Afastar"
+              alt="Afastar"
+              src="3dhop/skins/dark/zoomout.png"
             /><br />
 
             <img
               id="light_on"
               title="Desativar controle de luz"
+              alt="Desativar controle de luz"
               src="3dhop/skins/dark/lightcontrol_on.png"
               style="position:absolute; visibility:hidden;"
             />
             <img
               id="light"
               title="Ativar controle de luz"
+              alt="Controle de luz"
               src="3dhop/skins/dark/lightcontrol.png"
             /><br />
 
             <img
               id="measure_on"
               title="Desativar ferramenta de medição"
+              alt="Desativar medição"
               src="3dhop/skins/dark/measure_on.png"
               style="position:absolute; visibility:hidden;"
             />
             <img
               id="measure"
               title="Ativar ferramenta de medição"
+              alt="Medição"
               src="3dhop/skins/dark/measure.png"
+            /><br />
+
+            <img
+              id="hotspot_on"
+              title="Ocultar anotações"
+              alt="Ocultar anotações"
+              src="3dhop/skins/dark/pin_on.png"
+              style="position:absolute; visibility:hidden;"
+            />
+            <img
+              id="hotspot"
+              title="Mostrar anotações"
+              alt="Anotações"
+              src="3dhop/skins/dark/pin.png"
+            /><br />
+
+            <img
+              id="sections_on"
+              title="Desativar edição de seções"
+              alt="Desativar seções"
+              src="3dhop/skins/dark/sections_on.png"
+              style="position:absolute; visibility:hidden;"
+            />
+            <img
+              id="sections"
+              title="Editar seções"
+              alt="Seções"
+              src="3dhop/skins/dark/sections.png"
             /><br />
 
             <img
               id="full_on"
               title="Sair da tela cheia"
+              alt="Sair da tela cheia"
               src="3dhop/skins/dark/full_on.png"
               style="position:absolute; visibility:hidden;"
             />
             <img
               id="full"
               title="Tela cheia"
+              alt="Tela cheia"
               src="3dhop/skins/dark/full.png"
             /><br />
           </div>
@@ -184,6 +189,162 @@
             <span id="measure-output" class="output-text" onmousedown="event.stopPropagation()">0.00 m</span>
           </div>
 
+          <div id="sections-box" class="output-box">
+            <table class="output-table" onmousedown="event.stopPropagation()">
+              <tr>
+                <td>Plano</td>
+                <td>Posição</td>
+                <td>Inverter</td>
+              </tr>
+
+              <tr>
+                <td>
+                  <img
+                    id="xplane_on"
+                    title="Desativar corte no eixo X"
+                    src="3dhop/skins/icons/sectionX_on.png"
+                    onclick="sectionxSwitch()"
+                    style="position:absolute; visibility:hidden; border:1px inset;"
+                  />
+                  <img
+                    id="xplane"
+                    title="Ativar corte no eixo X"
+                    src="3dhop/skins/icons/sectionX.png"
+                    onclick="sectionxSwitch()"
+                  />
+                </td>
+
+                <td>
+                  <input id="xplaneSlider" class="output-input" type="range" title="Mover corte no eixo X" />
+                </td>
+
+                <td>
+                  <input id="xplaneFlip" class="output-input" type="checkbox" title="Inverter corte no eixo X" />
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <img
+                    id="yplane_on"
+                    title="Desativar corte no eixo Y"
+                    src="3dhop/skins/icons/sectionY_on.png"
+                    onclick="sectionySwitch()"
+                    style="position:absolute; visibility:hidden; border:1px inset;"
+                  />
+                  <img
+                    id="yplane"
+                    title="Ativar corte no eixo Y"
+                    src="3dhop/skins/icons/sectionY.png"
+                    onclick="sectionySwitch()"
+                  />
+                </td>
+
+                <td>
+                  <input id="yplaneSlider" class="output-input" type="range" title="Mover corte no eixo Y" />
+                </td>
+
+                <td>
+                  <input id="yplaneFlip" class="output-input" type="checkbox" title="Inverter corte no eixo Y" />
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <img
+                    id="zplane_on"
+                    title="Desativar corte no eixo Z"
+                    src="3dhop/skins/icons/sectionZ_on.png"
+                    onclick="sectionzSwitch()"
+                    style="position:absolute; visibility:hidden; border:1px inset;"
+                  />
+                  <img
+                    id="zplane"
+                    title="Ativar corte no eixo Z"
+                    src="3dhop/skins/icons/sectionZ.png"
+                    onclick="sectionzSwitch()"
+                  />
+                </td>
+
+                <td>
+                  <input id="zplaneSlider" class="output-input" type="range" title="Mover corte no eixo Z" />
+                </td>
+
+                <td>
+                  <input id="zplaneFlip" class="output-input" type="checkbox" title="Inverter corte no eixo Z" />
+                </td>
+              </tr>
+            </table>
+
+            <table class="output-table" onmousedown="event.stopPropagation()" style="text-align:right;">
+              <tr>
+                <td>
+                  Mostrar planos
+                  <input id="showPlane" class="output-input" type="checkbox" title="Mostrar planos de corte" />
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  Mostrar bordas
+                  <input id="showBorder" class="output-input" type="checkbox" title="Mostrar bordas dos cortes" />
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div id="metadata-panel" class="viewer-floating-panel">
+            <button class="floating-panel-close" type="button" onclick="fecharPainelMetadados()">×</button>
+            <h3>Metadados</h3>
+
+            <p>
+              <strong>Modelo:</strong>
+              <span id="metadata-title">—</span>
+            </p>
+
+            <p>
+              <strong>Projeto:</strong>
+              Patrimônio 3D Rio Grande
+            </p>
+
+            <p>
+              <strong>Instituição:</strong>
+              Universidade Federal do Rio Grande — FURG
+            </p>
+
+            <p>
+              <strong>Laboratório:</strong>
+              ARISE — Arqueologia Interativa e Simulações Eletrônicas
+            </p>
+
+            <p>
+              <strong>Formato:</strong>
+              Nexus <code>.nxs</code>
+            </p>
+
+            <p>
+              <strong>Uso:</strong>
+              pesquisa, conservação, educação patrimonial e divulgação científica.
+            </p>
+          </div>
+
+          <div id="annotations-panel" class="viewer-floating-panel annotations-panel">
+            <button class="floating-panel-close" type="button" onclick="fecharPainelAnotacoes()">×</button>
+            <h3>Anotações</h3>
+
+            <p>
+              Use este painel para registrar pontos interpretativos do modelo. No
+              site 3Duewelsteene, esse botão ativa hotspots 3D específicos do
+              projeto. Aqui ele foi adaptado como painel de anotações do modelo.
+            </p>
+
+            <ul>
+              <li><strong>Fachada:</strong> leitura arquitetônica e ornamental.</li>
+              <li><strong>Torre central:</strong> elemento vertical de destaque.</li>
+              <li><strong>Base e entorno:</strong> registro fotogramétrico do contexto imediato.</li>
+            </ul>
+          </div>
+
           <canvas
             id="draw-canvas"
             class="duewelsteene-canvas"
@@ -191,16 +352,31 @@
             oncontextmenu="return false;"
           ></canvas>
         </div>
-      </section>
+
+        <p class="duewelsteene-caption">
+          Para explorar o modelo, use a barra de ferramentas lateral. O botão de
+          medição mede na unidade do modelo; se o arquivo foi exportado em escala
+          métrica, a leitura corresponde a metros.
+        </p>
+      </div>
     </section>
 
     <section class="section">
       <div class="container">
-        <p class="section-label">Contexto patrimonial</p>
+        <p class="section-label">Informações</p>
+        <h2>Informações do bem digitalizado</h2>
 
-        <h2>Uso público do modelo digital</h2>
+        <div class="viewer-info-grid">
+          <div class="viewer-info-card">
+            <h3>Descrição</h3>
+            <p id="viewerDescricao"></p>
+          </div>
 
-        <p id="viewerUsoPublico"></p>
+          <div class="viewer-info-card">
+            <h3>Uso público do modelo digital</h3>
+            <p id="viewerUsoPublico"></p>
+          </div>
+        </div>
       </div>
     </section>
   </main>

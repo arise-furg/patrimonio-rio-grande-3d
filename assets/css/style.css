@@ -96,20 +96,20 @@ code {
   color: var(--color-primary);
 }
 
-/* HERO / PÁGINA GERAL */
+/* CABEÇALHO DA PÁGINA */
 
 .viewer-page {
-  background: #f7f7f7;
+  background: #ffffff;
 }
 
 .viewer-hero {
   background: #f6f3ed;
   border-bottom: 1px solid var(--color-border);
-  padding: 36px 0;
+  padding: 28px 0;
 }
 
-.compact-viewer-hero {
-  padding: 28px 0;
+.duewelsteene-hero {
+  padding: 26px 0 28px;
 }
 
 .viewer-hero-content {
@@ -158,36 +158,244 @@ h2 {
   margin: 0 0 10px;
 }
 
-/* LAYOUT DO VISUALIZADOR */
+/* ÁREA CENTRAL DO VISUALIZADOR */
 
-.viewer-layout {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  min-height: 78vh;
-}
-
-.duewelsteene-layout {
+.duewelsteene-viewer-section {
   background: #ffffff;
+  padding: 28px 0 18px;
 }
 
-.viewer-sidebar {
+.duewelsteene-viewer-wrap {
+  width: min(100% - 32px, 1120px);
+  margin: 0 auto;
+}
+
+.viewer-instruction-panel {
   background: #ffffff;
-  border-right: 1px solid var(--color-border);
-  padding: 24px;
+  border: 1px solid #dce3e7;
+  border-radius: 4px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  color: #4a555a;
 }
 
-.duewelsteene-sidebar {
+.viewer-instruction-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.viewer-instruction-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  background: #8a8a8a;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.viewer-instruction-body {
+  color: #5e6970;
+  font-size: 0.88rem;
+  padding-left: 38px;
+}
+
+.viewer-status {
+  position: absolute;
+  z-index: 80;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-primary);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.duewelsteene-status {
+  top: 78px;
+  left: 70px;
+}
+
+.duewelsteene-viewer {
+  position: relative;
+  width: 100%;
+  height: 660px;
+  min-height: 660px;
+  background: #ffffff;
+  overflow: hidden;
+  border: 0;
+}
+
+.duewelsteene-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-color: #ffffff;
+  background-repeat: repeat;
+  background-size: auto;
+}
+
+/* TOOLBAR NATIVA DO 3DHOP */
+
+#toolbar {
+  position: absolute !important;
+  top: 10px !important;
+  left: 10px !important;
+  z-index: 90 !important;
+  width: 54px;
+}
+
+#toolbar img {
+  display: block;
+  width: 54px !important;
+  height: auto !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  opacity: 0.55;
+  margin: 0 0 4px 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+#toolbar img:hover {
+  opacity: 0.88 !important;
+  transform: translateY(-1px);
+}
+
+#tdhlg {
+  position: absolute;
+  right: 22px;
+  bottom: 22px;
+  z-index: 40;
+  opacity: 0.45;
+}
+
+/* CAIXAS NATIVAS DO 3DHOP */
+
+.output-box {
+  z-index: 95 !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid #c9d6dc !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14) !important;
+  color: #263f46 !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.output-text {
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  color: #263f46 !important;
+}
+
+.output-table {
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+
+.output-table td {
+  padding: 4px 6px;
+}
+
+.output-table img {
+  width: 34px;
+  height: auto;
+  cursor: pointer;
+}
+
+.output-input {
+  max-width: 120px;
+}
+
+/* PAINÉIS FLUTUANTES */
+
+.viewer-floating-panel {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  z-index: 98;
+  width: 320px;
+  max-width: calc(100% - 100px);
+  max-height: 80%;
+  overflow: auto;
+  display: none;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid #c9d6dc;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  color: #263f46;
+  padding: 18px;
   font-size: 0.92rem;
 }
 
-.viewer-sidebar h2 {
-  font-family: var(--font-title);
-  font-size: 1.7rem;
+.viewer-floating-panel.is-visible {
+  display: block;
 }
 
-.viewer-actions {
-  margin: 22px 0;
+.viewer-floating-panel h3 {
+  margin-bottom: 12px;
+  font-family: var(--font-title);
 }
+
+.viewer-floating-panel ul {
+  padding-left: 20px;
+}
+
+.floating-panel-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: 0;
+  background: transparent;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #263f46;
+}
+
+.annotations-panel {
+  border-top: 5px solid #e85252;
+}
+
+/* LEGENDA ABAIXO DO VIEWER */
+
+.duewelsteene-caption {
+  margin: 8px 0 0;
+  font-size: 0.88rem;
+  color: #657174;
+}
+
+/* INFORMAÇÕES ABAIXO */
+
+.section {
+  padding: 64px 0;
+  background: #f6f3ed;
+}
+
+.viewer-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.viewer-info-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+/* BOTÕES GERAIS */
 
 .button {
   display: inline-flex;
@@ -222,161 +430,7 @@ h2 {
   margin-bottom: 10px;
 }
 
-.notice {
-  border-left: 4px solid var(--color-accent);
-  background: #fbf8f1;
-  padding: 14px 16px;
-  margin-bottom: 14px;
-}
-
-.notice h3 {
-  font-size: 1rem;
-  margin-bottom: 6px;
-}
-
-.notice p {
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-/* ÁREA 3D INSPIRADA NO 3DUEWELSTEENE */
-
-.viewer-canvas-area {
-  position: relative;
-  background: #ffffff;
-}
-
-.duewelsteene-canvas-area {
-  padding: 0;
-  overflow: hidden;
-}
-
-.viewer-instruction-panel {
-  background: #ffffff;
-  border-bottom: 1px solid #dce3e7;
-  padding: 12px 18px;
-  font-size: 0.95rem;
-  color: #4a555a;
-}
-
-.viewer-instruction-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.viewer-instruction-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 5px;
-  background: #8a8a8a;
-  color: white;
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
-.viewer-instruction-body {
-  color: #5e6970;
-  font-size: 0.88rem;
-  padding-left: 38px;
-}
-
-.viewer-status {
-  position: absolute;
-  top: 84px;
-  left: 86px;
-  z-index: 80;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--color-primary);
-  padding: 8px 12px;
-  border-radius: 999px;
-  font-size: 0.84rem;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-}
-
-.duewelsteene-status {
-  top: 92px;
-}
-
-.duewelsteene-viewer {
-  position: relative;
-  width: 100%;
-  height: 78vh;
-  min-height: 620px;
-  background: #ffffff;
-  overflow: hidden;
-}
-
-.duewelsteene-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  background-color: #ffffff;
-  background-repeat: repeat;
-  background-size: auto;
-}
-
-/* AJUSTES DA TOOLBAR NATIVA DO 3DHOP */
-
-#toolbar {
-  position: absolute !important;
-  top: 18px !important;
-  left: 18px !important;
-  z-index: 90 !important;
-}
-
-#toolbar img {
-  opacity: 0.55;
-  width: 48px;
-  height: 48px;
-  margin-bottom: 6px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
-#toolbar img:hover {
-  opacity: 0.85 !important;
-  transform: translateY(-1px);
-}
-
-#tdhlg {
-  position: absolute;
-  right: 22px;
-  bottom: 22px;
-  z-index: 40;
-  opacity: 0.45;
-}
-
-/* CAIXAS NATIVAS DO 3DHOP */
-
-.output-box {
-  z-index: 95 !important;
-  background: rgba(255, 255, 255, 0.94) !important;
-  border: 1px solid #c9d6dc !important;
-  border-radius: 8px !important;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14) !important;
-  color: #263f46 !important;
-  font-family: Arial, Helvetica, sans-serif !important;
-}
-
-.output-text {
-  font-size: 1.1rem !important;
-  font-weight: 700 !important;
-  color: #263f46 !important;
-}
-
-/* SEÇÕES RESTANTES */
-
-.section {
-  padding: 70px 0;
-  background: #f6f3ed;
-}
+/* RODAPÉ */
 
 .footer {
   background: #101719;
@@ -395,24 +449,19 @@ h2 {
 /* RESPONSIVIDADE */
 
 @media (max-width: 1000px) {
-  .viewer-layout,
-  .viewer-hero-content {
+  .viewer-hero-content,
+  .viewer-info-grid {
     grid-template-columns: 1fr;
   }
 
-  .viewer-sidebar {
-    border-right: 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-
   .duewelsteene-viewer {
-    height: 72vh;
-    min-height: 520px;
+    height: 620px;
+    min-height: 620px;
   }
 
-  .viewer-status {
-    top: 92px;
-    left: 86px;
+  .duewelsteene-status {
+    top: 76px;
+    left: 70px;
     right: 18px;
   }
 }
@@ -428,18 +477,37 @@ h2 {
     flex-wrap: wrap;
   }
 
+  .duewelsteene-viewer-wrap {
+    width: min(100% - 16px, 1120px);
+  }
+
+  .duewelsteene-viewer {
+    height: 560px;
+    min-height: 560px;
+  }
+
+  #toolbar {
+    width: 46px;
+  }
+
   #toolbar img {
-    width: 42px;
-    height: 42px;
+    width: 46px !important;
   }
 
   .viewer-instruction-body {
     padding-left: 0;
   }
 
-  .viewer-status {
-    left: 76px;
-    max-width: calc(100% - 90px);
+  .duewelsteene-status {
+    left: 62px;
+    max-width: calc(100% - 80px);
+  }
+
+  .viewer-floating-panel {
+    left: 62px;
+    right: 10px;
+    width: auto;
+    max-width: none;
   }
 
   .footer-content {
