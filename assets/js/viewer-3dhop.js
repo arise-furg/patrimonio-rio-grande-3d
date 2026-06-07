@@ -165,7 +165,7 @@ function configurarCena3DHOP(monumento) {
         startPanY: 0.0,
         startPanZ: 0.0,
 
-        minMaxDist: [0.1, 80.0]
+        minMaxDist: [0.05, 80.0]
       }
     },
 
