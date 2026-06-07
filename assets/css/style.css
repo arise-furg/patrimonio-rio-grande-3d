@@ -526,7 +526,7 @@ h3 {
   background: #111;
 }
 
-/* BARRA DE FERRAMENTAS PERSONALIZADA DO 3DHOP */
+/* BARRA DE FERRAMENTAS PERSONALIZADA */
 
 .toolbar-3dhop-custom {
   position: absolute;
@@ -564,6 +564,57 @@ h3 {
 }
 
 .tool-button.active-tool {
+  background: #b98645;
+  color: #ffffff;
+  border-color: #b98645;
+}
+
+/* PAINEL DE ORIENTAÇÃO */
+
+.orientation-panel {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 85;
+  width: 220px;
+  padding: 12px;
+  background: rgba(20, 32, 36, 0.86);
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+  color: #ffffff;
+}
+
+.orientation-panel-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+  color: #f1eadc;
+}
+
+.orientation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.orientation-button {
+  min-height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #263f46;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.orientation-button:hover {
+  background: #f1eadc;
+}
+
+.orientation-button.active-orientation {
   background: #b98645;
   color: #ffffff;
   border-color: #b98645;
@@ -708,12 +759,20 @@ h3 {
   }
 
   .viewer-box {
-    height: 70vh;
+    height: 72vh;
   }
 
   .viewer-status {
     left: 84px;
+    right: 18px;
     max-width: calc(100% - 108px);
+  }
+
+  .orientation-panel {
+    top: auto;
+    right: 16px;
+    bottom: 124px;
+    width: 190px;
   }
 
   .orientation-gizmo {

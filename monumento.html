@@ -80,18 +80,17 @@
         <div class="notice">
           <h3>Como navegar</h3>
           <p>
-            Use a barra de ferramentas sobre o visualizador 3D para alternar entre
-            rotação livre, pan e zoom. Também é possível usar o mouse, a roda do
-            mouse, o touchpad ou gestos de toque em dispositivos móveis.
+            Use os botões de orientação para visualizar o modelo de frente, trás,
+            esquerda, direita, topo e base. Para navegação livre, use o modo de
+            rotação 360° e arraste com o mouse sobre o modelo.
           </p>
         </div>
 
         <div class="notice">
           <h3>Ferramentas do visualizador</h3>
           <p>
-            A interface inclui rotação livre em 360°, pan, zoom, recentralização
-            do modelo e tela cheia. O gizmo no canto inferior direito indica a
-            orientação espacial dos eixos X, Y e Z.
+            A interface inclui rotação livre, pan, zoom, vistas ortogonais,
+            recentralização do modelo e tela cheia.
           </p>
         </div>
 
@@ -118,13 +117,13 @@
             <div class="gizmo-axis gizmo-z">Z</div>
           </div>
 
-          <!-- Barra personalizada de ferramentas -->
+          <!-- Barra principal de ferramentas -->
           <div id="toolbar" class="toolbar-3dhop-custom">
             <button
               class="tool-button"
               type="button"
-              title="Gizmo / rotação livre 360"
-              aria-label="Gizmo / rotação livre 360"
+              title="Rotação livre 360"
+              aria-label="Rotação livre 360"
               data-tool="rotate"
               onclick="ativarRotacao3603DHOP()"
             >
@@ -192,6 +191,67 @@
             >
               ⛶
             </button>
+          </div>
+
+          <!-- Painel de orientação -->
+          <div class="orientation-panel">
+            <div class="orientation-panel-title">Orientação</div>
+
+            <div class="orientation-grid">
+              <button
+                class="orientation-button"
+                type="button"
+                data-view="front"
+                onclick="aplicarOrientacao3DHOP('front')"
+              >
+                Frente
+              </button>
+
+              <button
+                class="orientation-button"
+                type="button"
+                data-view="back"
+                onclick="aplicarOrientacao3DHOP('back')"
+              >
+                Trás
+              </button>
+
+              <button
+                class="orientation-button"
+                type="button"
+                data-view="left"
+                onclick="aplicarOrientacao3DHOP('left')"
+              >
+                Esquerda
+              </button>
+
+              <button
+                class="orientation-button"
+                type="button"
+                data-view="right"
+                onclick="aplicarOrientacao3DHOP('right')"
+              >
+                Direita
+              </button>
+
+              <button
+                class="orientation-button"
+                type="button"
+                data-view="top"
+                onclick="aplicarOrientacao3DHOP('top')"
+              >
+                Topo
+              </button>
+
+              <button
+                class="orientation-button"
+                type="button"
+                data-view="bottom"
+                onclick="aplicarOrientacao3DHOP('bottom')"
+              >
+                Base
+              </button>
+            </div>
           </div>
 
           <canvas id="draw-canvas"></canvas>

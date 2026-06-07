@@ -2,6 +2,8 @@ let presenter = null;
 window.presenter = presenter;
 
 let modoAtual = "rotate";
+let monumentoAtual = null;
+let orientacaoAtual = "front";
 
 document.addEventListener("DOMContentLoaded", () => {
   const monumento = obterMonumentoAtual();
@@ -11,9 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  monumentoAtual = monumento;
+
   preencherInformacoes(monumento);
   configurarBotoesExternos();
-  iniciarVisualizador3DHOP(monumento);
+  iniciarVisualizador3DHOP(monumento, "front");
 });
 
 function obterMonumentoAtual() {
@@ -76,7 +80,7 @@ function configurarBotoesExternos() {
   }
 }
 
-function iniciarVisualizador3DHOP(monumento) {
+function iniciarVisualizador3DHOP(monumento, orientacao = "front") {
   const status = document.getElementById("viewerStatus");
 
   try {
@@ -89,45 +93,10 @@ function iniciarVisualizador3DHOP(monumento) {
     presenter = new Presenter("draw-canvas");
     window.presenter = presenter;
 
-    const tipoTrackball =
-      typeof SphereTrackball !== "undefined"
-        ? SphereTrackball
-        : TurntablePanTrackball;
-
-    presenter.setScene({
-      meshes: {
-        "modelo_principal": {
-          url: monumento.modelo
-        }
-      },
-
-      modelInstances: {
-        "instancia_modelo": {
-          mesh: "modelo_principal"
-        }
-      },
-
-      trackball: {
-        type: tipoTrackball,
-
-        trackOptions: {
-          startDistance: 2.5,
-          minMaxDist: [0.2, 40.0],
-          startPhi: 0.0,
-          startTheta: 0.0,
-          startPanX: 0.0,
-          startPanY: 0.0,
-          startPanZ: 0.0
-        }
-      },
-
-      space: {
-        centerMode: "scene",
-        radiusMode: "scene"
-      }
-    });
+    carregarCena3DHOP(monumento, orientacao);
 
     definirModo3DHOP("rotate");
+    marcarOrientacaoAtiva(orientacao);
 
     window.addEventListener("resize", () => {
       ajustarResolucaoCanvas();
@@ -143,7 +112,7 @@ function iniciarVisualizador3DHOP(monumento) {
 
     if (status) {
       status.textContent =
-        "Modo rotação 360 ativo. Arraste o mouse sobre o modelo para girar.";
+        "Vista frontal carregada. Use os botões de orientação ou arraste o mouse para girar.";
     }
   } catch (erro) {
     console.error(erro);
@@ -152,6 +121,137 @@ function iniciarVisualizador3DHOP(monumento) {
       status.textContent =
         "Não foi possível carregar o visualizador. Verifique os arquivos do 3DHOP e o caminho do modelo .nxs.";
     }
+  }
+}
+
+function carregarCena3DHOP(monumento, orientacao = "front") {
+  if (!window.presenter) {
+    return;
+  }
+
+  const configuracao = obterConfiguracaoOrientacao(orientacao);
+
+  const tipoTrackball =
+    typeof SphereTrackball !== "undefined"
+      ? SphereTrackball
+      : TurntablePanTrackball;
+
+  window.presenter.setScene({
+    meshes: {
+      "modelo_principal": {
+        url: monumento.modelo
+      }
+    },
+
+    modelInstances: {
+      "instancia_modelo": {
+        mesh: "modelo_principal"
+      }
+    },
+
+    trackball: {
+      type: tipoTrackball,
+
+      trackOptions: {
+        startDistance: configuracao.startDistance,
+        minMaxDist: [0.2, 60.0],
+        startPhi: configuracao.startPhi,
+        startTheta: configuracao.startTheta,
+        startPanX: 0.0,
+        startPanY: 0.0,
+        startPanZ: 0.0
+      }
+    },
+
+    space: {
+      centerMode: "scene",
+      radiusMode: "scene"
+    }
+  });
+
+  orientacaoAtual = orientacao;
+  marcarOrientacaoAtiva(orientacao);
+  atualizarStatusOrientacao(orientacao);
+  repintar3DHOP();
+}
+
+function obterConfiguracaoOrientacao(orientacao) {
+  const distanciaPadrao = 2.5;
+
+  const orientacoes = {
+    front: {
+      startPhi: 0.0,
+      startTheta: 0.0,
+      startDistance: distanciaPadrao,
+      nome: "frente"
+    },
+
+    back: {
+      startPhi: 0.0,
+      startTheta: Math.PI,
+      startDistance: distanciaPadrao,
+      nome: "trás"
+    },
+
+    left: {
+      startPhi: 0.0,
+      startTheta: -Math.PI / 2,
+      startDistance: distanciaPadrao,
+      nome: "esquerda"
+    },
+
+    right: {
+      startPhi: 0.0,
+      startTheta: Math.PI / 2,
+      startDistance: distanciaPadrao,
+      nome: "direita"
+    },
+
+    top: {
+      startPhi: -Math.PI / 2,
+      startTheta: 0.0,
+      startDistance: distanciaPadrao,
+      nome: "topo"
+    },
+
+    bottom: {
+      startPhi: Math.PI / 2,
+      startTheta: 0.0,
+      startDistance: distanciaPadrao,
+      nome: "base"
+    }
+  };
+
+  return orientacoes[orientacao] || orientacoes.front;
+}
+
+function aplicarOrientacao3DHOP(orientacao) {
+  if (!monumentoAtual || !window.presenter) {
+    return;
+  }
+
+  carregarCena3DHOP(monumentoAtual, orientacao);
+  definirModo3DHOP("rotate");
+}
+
+function marcarOrientacaoAtiva(orientacao) {
+  document
+    .querySelectorAll(".orientation-button")
+    .forEach((botao) => botao.classList.remove("active-orientation"));
+
+  const botaoAtivo = document.querySelector(`[data-view="${orientacao}"]`);
+
+  if (botaoAtivo) {
+    botaoAtivo.classList.add("active-orientation");
+  }
+}
+
+function atualizarStatusOrientacao(orientacao) {
+  const status = document.getElementById("viewerStatus");
+  const configuracao = obterConfiguracaoOrientacao(orientacao);
+
+  if (status) {
+    status.textContent = `Vista ${configuracao.nome} aplicada. Você ainda pode girar, aproximar ou deslocar o modelo.`;
   }
 }
 
@@ -232,16 +332,11 @@ function definirModo3DHOP(modo) {
 }
 
 function resetarModelo3DHOP() {
-  if (!window.presenter) {
+  if (!window.presenter || !monumentoAtual) {
     return;
   }
 
-  if (typeof window.presenter.resetTrackball === "function") {
-    window.presenter.resetTrackball();
-  } else if (typeof window.presenter.reset === "function") {
-    window.presenter.reset();
-  }
-
+  carregarCena3DHOP(monumentoAtual, "front");
   definirModo3DHOP("rotate");
   repintar3DHOP();
 }
