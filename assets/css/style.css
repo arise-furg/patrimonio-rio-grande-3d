@@ -265,6 +265,75 @@ h2 {
   background-repeat: repeat !important;
 }
 
+/* CORREÇÃO DA TELA CHEIA DO 3DHOP */
+
+#3dhop:fullscreen,
+#3dhop:-webkit-full-screen,
+#3dhop:-moz-full-screen,
+#3dhop:-ms-fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  min-width: 100vw !important;
+  min-height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #e6e6e6 !important;
+  overflow: hidden !important;
+}
+
+#3dhop:fullscreen #draw-canvas,
+#3dhop:-webkit-full-screen #draw-canvas,
+#3dhop:-moz-full-screen #draw-canvas,
+#3dhop:-ms-fullscreen #draw-canvas {
+  width: 100vw !important;
+  height: 100vh !important;
+  min-width: 100vw !important;
+  min-height: 100vh !important;
+  display: block !important;
+}
+
+#3dhop:fullscreen .duewelsteene-canvas,
+#3dhop:-webkit-full-screen .duewelsteene-canvas,
+#3dhop:-moz-full-screen .duewelsteene-canvas,
+#3dhop:-ms-fullscreen .duewelsteene-canvas {
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+#3dhop:fullscreen #toolbar,
+#3dhop:-webkit-full-screen #toolbar,
+#3dhop:-moz-full-screen #toolbar,
+#3dhop:-ms-fullscreen #toolbar {
+  top: 18px !important;
+  left: 18px !important;
+  z-index: 120 !important;
+}
+
+#3dhop:fullscreen #tdhlg,
+#3dhop:-webkit-full-screen #tdhlg,
+#3dhop:-moz-full-screen #tdhlg,
+#3dhop:-ms-fullscreen #tdhlg {
+  right: 24px !important;
+  bottom: 24px !important;
+}
+
+#3dhop:fullscreen .viewer-floating-panel,
+#3dhop:-webkit-full-screen .viewer-floating-panel,
+#3dhop:-moz-full-screen .viewer-floating-panel,
+#3dhop:-ms-fullscreen .viewer-floating-panel {
+  top: 24px !important;
+  right: 24px !important;
+}
+
+#3dhop:fullscreen .output-box,
+#3dhop:-webkit-full-screen .output-box,
+#3dhop:-moz-full-screen .output-box,
+#3dhop:-ms-fullscreen .output-box {
+  z-index: 130 !important;
+}
+
 /* TOOLBAR NATIVA DO 3DHOP */
 
 #toolbar {
@@ -485,6 +554,20 @@ h2 {
   }
 
   #toolbar img {
+    width: 46px !important;
+  }
+
+  #3dhop:fullscreen #toolbar,
+  #3dhop:-webkit-full-screen #toolbar,
+  #3dhop:-moz-full-screen #toolbar,
+  #3dhop:-ms-fullscreen #toolbar {
+    width: 46px !important;
+  }
+
+  #3dhop:fullscreen #toolbar img,
+  #3dhop:-webkit-full-screen #toolbar img,
+  #3dhop:-moz-full-screen #toolbar img,
+  #3dhop:-ms-fullscreen #toolbar img {
     width: 46px !important;
   }
 
