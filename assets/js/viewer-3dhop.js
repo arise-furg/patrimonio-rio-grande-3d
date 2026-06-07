@@ -1,6 +1,8 @@
 let presenter = null;
 window.presenter = presenter;
 
+let modoAtual = "rotate";
+
 document.addEventListener("DOMContentLoaded", () => {
   const monumento = obterMonumentoAtual();
 
@@ -26,16 +28,18 @@ function obterMonumentoAtual() {
 }
 
 function mostrarErroMonumento() {
-  definirTexto("viewerTitulo", "Monumento n„o encontrado");
+  definirTexto("viewerTitulo", "Monumento n√£o encontrado");
+
   definirTexto(
     "viewerResumo",
-    "Verifique se o endereÁo da p·gina contÈm um identificador v·lido, por exemplo: monumento.html?id=alfandega"
+    "Verifique se o endere√ßo da p√°gina cont√©m um identificador v√°lido, por exemplo: monumento.html?id=alfandega"
   );
-  definirTexto("viewerStatus", "Erro: monumento n„o encontrado.");
+
+  definirTexto("viewerStatus", "Erro: monumento n√£o encontrado.");
 }
 
 function preencherInformacoes(monumento) {
-  document.title = `${monumento.titulo} ∑ PatrimÙnio Rio Grande`;
+  document.title = `${monumento.titulo} ¬∑ Patrim√¥nio Rio Grande`;
 
   definirTexto("viewerCategoria", monumento.categoria);
   definirTexto("viewerTitulo", monumento.titulo);
@@ -77,7 +81,7 @@ function iniciarVisualizador3DHOP(monumento) {
 
   try {
     if (typeof Presenter === "undefined") {
-      throw new Error("A biblioteca Presenter do 3DHOP n„o foi carregada.");
+      throw new Error("A biblioteca Presenter do 3DHOP n√£o foi carregada.");
     }
 
     ajustarResolucaoCanvas();
@@ -86,9 +90,9 @@ function iniciarVisualizador3DHOP(monumento) {
     window.presenter = presenter;
 
     const tipoTrackball =
-      typeof TurntablePanTrackball !== "undefined"
-        ? TurntablePanTrackball
-        : SphereTrackball;
+      typeof SphereTrackball !== "undefined"
+        ? SphereTrackball
+        : TurntablePanTrackball;
 
     presenter.setScene({
       meshes: {
@@ -108,7 +112,7 @@ function iniciarVisualizador3DHOP(monumento) {
 
         trackOptions: {
           startDistance: 2.5,
-          minMaxDist: [0.2, 30.0],
+          minMaxDist: [0.2, 40.0],
           startPhi: 0.0,
           startTheta: 0.0,
           startPanX: 0.0,
@@ -123,6 +127,8 @@ function iniciarVisualizador3DHOP(monumento) {
       }
     });
 
+    definirModo3DHOP("rotate");
+
     window.addEventListener("resize", () => {
       ajustarResolucaoCanvas();
       repintar3DHOP();
@@ -136,14 +142,15 @@ function iniciarVisualizador3DHOP(monumento) {
     });
 
     if (status) {
-      status.textContent = "Modelo carregado. Use o mouse ou toque para navegar.";
+      status.textContent =
+        "Modo rota√ß√£o 360 ativo. Arraste o mouse sobre o modelo para girar.";
     }
   } catch (erro) {
     console.error(erro);
 
     if (status) {
       status.textContent =
-        "N„o foi possÌvel carregar o visualizador. Verifique os arquivos do 3DHOP e o caminho do modelo .nxs.";
+        "N√£o foi poss√≠vel carregar o visualizador. Verifique os arquivos do 3DHOP e o caminho do modelo .nxs.";
     }
   }
 }
@@ -176,7 +183,53 @@ function repintar3DHOP() {
   }
 }
 
-/* FunÁıes da barra personalizada */
+function definirModo3DHOP(modo) {
+  modoAtual = modo;
+
+  const canvas = document.getElementById("draw-canvas");
+  const status = document.getElementById("viewerStatus");
+
+  document
+    .querySelectorAll(".tool-button")
+    .forEach((botao) => botao.classList.remove("active-tool"));
+
+  const botaoAtivo = document.querySelector(`[data-tool="${modo}"]`);
+
+  if (botaoAtivo) {
+    botaoAtivo.classList.add("active-tool");
+  }
+
+  if (!canvas) {
+    return;
+  }
+
+  if (modo === "rotate") {
+    canvas.style.cursor = "grab";
+
+    if (status) {
+      status.textContent =
+        "Modo rota√ß√£o 360 ativo. Arraste com o bot√£o esquerdo do mouse para girar o modelo.";
+    }
+  }
+
+  if (modo === "pan") {
+    canvas.style.cursor = "move";
+
+    if (status) {
+      status.textContent =
+        "Modo pan ativo. Use Shift + arrastar, bot√£o direito do mouse ou gesto equivalente para deslocar a visualiza√ß√£o.";
+    }
+  }
+
+  if (modo === "zoom") {
+    canvas.style.cursor = "zoom-in";
+
+    if (status) {
+      status.textContent =
+        "Modo zoom ativo. Use a roda do mouse, o gesto de pin√ßa no touchpad ou os bot√µes + e ‚àí.";
+    }
+  }
+}
 
 function resetarModelo3DHOP() {
   if (!window.presenter) {
@@ -189,6 +242,22 @@ function resetarModelo3DHOP() {
     window.presenter.reset();
   }
 
+  definirModo3DHOP("rotate");
+  repintar3DHOP();
+}
+
+function ativarRotacao3603DHOP() {
+  definirModo3DHOP("rotate");
+  repintar3DHOP();
+}
+
+function ativarPan3DHOP() {
+  definirModo3DHOP("pan");
+  repintar3DHOP();
+}
+
+function ativarZoom3DHOP() {
+  definirModo3DHOP("zoom");
   repintar3DHOP();
 }
 
@@ -197,14 +266,12 @@ function aproximarModelo3DHOP() {
     return;
   }
 
+  definirModo3DHOP("zoom");
+
   if (typeof window.presenter.zoomIn === "function") {
     window.presenter.zoomIn();
-  } else if (
-    window.presenter._scene &&
-    window.presenter._scene.trackball &&
-    typeof window.presenter._scene.trackball.scale === "function"
-  ) {
-    window.presenter._scene.trackball.scale(0.85);
+  } else {
+    simularZoomPorRoda(-1);
   }
 
   repintar3DHOP();
@@ -215,45 +282,31 @@ function afastarModelo3DHOP() {
     return;
   }
 
+  definirModo3DHOP("zoom");
+
   if (typeof window.presenter.zoomOut === "function") {
     window.presenter.zoomOut();
-  } else if (
-    window.presenter._scene &&
-    window.presenter._scene.trackball &&
-    typeof window.presenter._scene.trackball.scale === "function"
-  ) {
-    window.presenter._scene.trackball.scale(1.15);
-  }
-
-  repintar3DHOP();
-}
-
-function alternarLuz3DHOP() {
-  if (!window.presenter) {
-    return;
-  }
-
-  if (typeof window.presenter.toggleLightTrackball === "function") {
-    window.presenter.toggleLightTrackball();
-  } else if (typeof window.presenter.enableLightTrackball === "function") {
-    window.presenter.enableLightTrackball(true);
-  }
-
-  repintar3DHOP();
-}
-
-function ativarMedicao3DHOP() {
-  if (!window.presenter) {
-    return;
-  }
-
-  if (typeof window.presenter.enableMeasurementTool === "function") {
-    window.presenter.enableMeasurementTool(true);
   } else {
-    alert("A ferramenta de mediÁ„o n„o est· disponÌvel nesta configuraÁ„o do 3DHOP.");
+    simularZoomPorRoda(1);
   }
 
   repintar3DHOP();
+}
+
+function simularZoomPorRoda(direcao) {
+  const canvas = document.getElementById("draw-canvas");
+
+  if (!canvas) {
+    return;
+  }
+
+  const evento = new WheelEvent("wheel", {
+    deltaY: direcao * 120,
+    bubbles: true,
+    cancelable: true
+  });
+
+  canvas.dispatchEvent(evento);
 }
 
 function abrirTelaCheia3DHOP() {

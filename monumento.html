@@ -68,11 +68,11 @@
         <p id="viewerDescricao"></p>
 
         <div class="viewer-actions">
-          <button class="button primary full" id="btnResetCamera">
+          <button class="button primary full" id="btnResetCamera" type="button">
             Recentralizar modelo
           </button>
 
-          <button class="button secondary full" id="btnFullscreen">
+          <button class="button secondary full" id="btnFullscreen" type="button">
             Tela cheia
           </button>
         </div>
@@ -80,16 +80,18 @@
         <div class="notice">
           <h3>Como navegar</h3>
           <p>
-            Use o mouse para girar, aproximar e afastar o modelo. Em dispositivos
-            móveis, utilize gestos de toque.
+            Use a barra de ferramentas sobre o visualizador 3D para alternar entre
+            rotação livre, pan e zoom. Também é possível usar o mouse, a roda do
+            mouse, o touchpad ou gestos de toque em dispositivos móveis.
           </p>
         </div>
 
         <div class="notice">
           <h3>Ferramentas do visualizador</h3>
           <p>
-            A barra sobre a área 3D permite recentralizar, aproximar, afastar,
-            alternar luz, ativar medição e abrir em tela cheia.
+            A interface inclui rotação livre em 360°, pan, zoom, recentralização
+            do modelo e tela cheia. O gizmo no canto inferior direito indica a
+            orientação espacial dos eixos X, Y e Z.
           </p>
         </div>
 
@@ -108,16 +110,47 @@
         </div>
 
         <div id="3dhop" class="tdhop viewer-box">
+          <!-- Gizmo visual de orientação -->
+          <div class="orientation-gizmo" aria-hidden="true">
+            <div class="gizmo-center"></div>
+            <div class="gizmo-axis gizmo-x">X</div>
+            <div class="gizmo-axis gizmo-y">Y</div>
+            <div class="gizmo-axis gizmo-z">Z</div>
+          </div>
+
           <!-- Barra personalizada de ferramentas -->
           <div id="toolbar" class="toolbar-3dhop-custom">
             <button
               class="tool-button"
               type="button"
-              title="Recentralizar modelo"
-              aria-label="Recentralizar modelo"
-              onclick="resetarModelo3DHOP()"
+              title="Gizmo / rotação livre 360"
+              aria-label="Gizmo / rotação livre 360"
+              data-tool="rotate"
+              onclick="ativarRotacao3603DHOP()"
             >
-              ⌂
+              ⊙
+            </button>
+
+            <button
+              class="tool-button"
+              type="button"
+              title="Pan / deslocar visualização"
+              aria-label="Pan / deslocar visualização"
+              data-tool="pan"
+              onclick="ativarPan3DHOP()"
+            >
+              ✥
+            </button>
+
+            <button
+              class="tool-button"
+              type="button"
+              title="Zoom"
+              aria-label="Zoom"
+              data-tool="zoom"
+              onclick="ativarZoom3DHOP()"
+            >
+              🔍
             </button>
 
             <button
@@ -143,21 +176,11 @@
             <button
               class="tool-button"
               type="button"
-              title="Alternar luz"
-              aria-label="Alternar luz"
-              onclick="alternarLuz3DHOP()"
+              title="Recentralizar modelo"
+              aria-label="Recentralizar modelo"
+              onclick="resetarModelo3DHOP()"
             >
-              ☀
-            </button>
-
-            <button
-              class="tool-button"
-              type="button"
-              title="Ativar medição"
-              aria-label="Ativar medição"
-              onclick="ativarMedicao3DHOP()"
-            >
-              ⟷
+              ⌂
             </button>
 
             <button

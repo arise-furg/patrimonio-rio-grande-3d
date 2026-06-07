@@ -502,8 +502,8 @@ h3 {
 .viewer-status {
   position: absolute;
   top: 16px;
-  left: 74px;
-  z-index: 60;
+  left: 84px;
+  z-index: 80;
   background: rgba(255, 255, 255, 0.92);
   color: var(--color-primary);
   padding: 8px 12px;
@@ -532,7 +532,7 @@ h3 {
   position: absolute;
   top: 18px;
   left: 18px;
-  z-index: 70;
+  z-index: 90;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -543,13 +543,13 @@ h3 {
 }
 
 .tool-button {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border: 1px solid rgba(255, 255, 255, 0.26);
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.94);
   color: #263f46;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
@@ -563,13 +563,97 @@ h3 {
   transform: translateY(-1px);
 }
 
-/* COMPATIBILIDADE COM TOOLBAR NATIVA DO 3DHOP, CASO USE DEPOIS */
+.tool-button.active-tool {
+  background: #b98645;
+  color: #ffffff;
+  border-color: #b98645;
+}
 
-#toolbar {
+/* GIZMO VISUAL DE ORIENTAÇÃO */
+
+.orientation-gizmo {
   position: absolute;
-  top: 18px;
+  right: 24px;
+  bottom: 24px;
+  width: 120px;
+  height: 120px;
+  z-index: 75;
+  border-radius: 50%;
+  background: rgba(20, 32, 36, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+
+.gizmo-center {
+  position: absolute;
+  top: 54px;
+  left: 54px;
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 50%;
+}
+
+.gizmo-axis {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gizmo-x {
+  right: 12px;
+  top: 48px;
+  background: #b84a4a;
+}
+
+.gizmo-y {
+  left: 46px;
+  top: 10px;
+  background: #4a8f5a;
+}
+
+.gizmo-z {
   left: 18px;
-  z-index: 70;
+  bottom: 18px;
+  background: #4a6fb8;
+}
+
+.gizmo-x::before,
+.gizmo-y::before,
+.gizmo-z::before {
+  content: "";
+  position: absolute;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.gizmo-x::before {
+  width: 42px;
+  height: 3px;
+  right: 26px;
+  top: 13px;
+}
+
+.gizmo-y::before {
+  width: 3px;
+  height: 42px;
+  left: 13px;
+  top: 26px;
+}
+
+.gizmo-z::before {
+  width: 38px;
+  height: 3px;
+  left: 24px;
+  top: 4px;
+  transform: rotate(-42deg);
 }
 
 /* RESPONSIVIDADE */
@@ -628,8 +712,35 @@ h3 {
   }
 
   .viewer-status {
-    left: 74px;
-    max-width: calc(100% - 96px);
+    left: 84px;
+    max-width: calc(100% - 108px);
+  }
+
+  .orientation-gizmo {
+    width: 96px;
+    height: 96px;
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .gizmo-center {
+    top: 42px;
+    left: 42px;
+  }
+
+  .gizmo-x {
+    right: 8px;
+    top: 36px;
+  }
+
+  .gizmo-y {
+    left: 34px;
+    top: 8px;
+  }
+
+  .gizmo-z {
+    left: 12px;
+    bottom: 12px;
   }
 
   .section-heading {
