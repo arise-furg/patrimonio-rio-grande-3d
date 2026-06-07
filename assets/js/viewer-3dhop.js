@@ -8,23 +8,18 @@ let anotacoesVisiveis = false;
 /*
   Ajustes de orientação do modelo.
 
-  Seu modelo está aparecendo visto de cima porque, ao que tudo indica,
-  o arquivo .nxs foi gerado com o edifício deitado em relação ao sistema
-  de eixos usado pelo 3DHOP.
+  Situação atual:
+  - MODEL_ROTATION_X = -90 corrigiu o modelo "deitado".
+  - MODEL_ROTATION_Y = 180 corrige a fachada que estava aparecendo de costas.
 
-  Por isso, aqui fazemos duas coisas:
-  1. Rotacionamos o MODELO.
-  2. Configuramos a CÂMERA inicial.
-
-  Se a fachada ainda não aparecer frontal:
-  - teste MODEL_ROTATION_X = 90;
-  - depois teste MODEL_ROTATION_Y = 90;
-  - depois teste MODEL_ROTATION_Z = 90;
-  mantendo os outros em 0.
+  Se futuramente outro modelo aparecer invertido, os principais valores para testar são:
+  - MODEL_ROTATION_Y = 0;
+  - MODEL_ROTATION_Y = 180;
+  - MODEL_ROTATION_Z = 180;
 */
 
 const MODEL_ROTATION_X = -90;
-const MODEL_ROTATION_Y = 0;
+const MODEL_ROTATION_Y = 180;
 const MODEL_ROTATION_Z = 0;
 
 const CAMERA_START_DISTANCE = 1.15;
@@ -581,6 +576,7 @@ function configurarFerramentasDeSecao() {
 
   configurarSliderSecao("xplaneSlider", "x", (valor) => {
     sectionxSwitch(true);
+
     if (typeof presenter.setClippingPointX === "function") {
       presenter.setClippingPointX(valor);
     }
@@ -588,6 +584,7 @@ function configurarFerramentasDeSecao() {
 
   configurarSliderSecao("yplaneSlider", "y", (valor) => {
     sectionySwitch(true);
+
     if (typeof presenter.setClippingPointY === "function") {
       presenter.setClippingPointY(valor);
     }
@@ -595,6 +592,7 @@ function configurarFerramentasDeSecao() {
 
   configurarSliderSecao("zplaneSlider", "z", (valor) => {
     sectionzSwitch(true);
+
     if (typeof presenter.setClippingPointZ === "function") {
       presenter.setClippingPointZ(valor);
     }
@@ -612,6 +610,7 @@ function configurarFerramentasDeSecao() {
       if (typeof presenter.setClippingPlanesVisibility === "function") {
         presenter.setClippingPlanesVisibility(showPlane.checked);
       }
+
       repintar3DHOP();
     });
   }
@@ -621,6 +620,7 @@ function configurarFerramentasDeSecao() {
       if (typeof presenter.setClippingBorderVisibility === "function") {
         presenter.setClippingBorderVisibility(showBorder.checked);
       }
+
       repintar3DHOP();
     });
   }
@@ -750,6 +750,7 @@ function alternarPlano(eixo, forcarAtivo) {
     const x = document.getElementById("xplane_on").style.visibility === "visible" ? 1 : 0;
     const y = document.getElementById("yplane_on").style.visibility === "visible" ? 1 : 0;
     const z = document.getElementById("zplane_on").style.visibility === "visible" ? 1 : 0;
+
     presenter.setClippingXYZ(x, y, z);
   }
 
