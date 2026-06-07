@@ -104,6 +104,8 @@ function iniciarVisualizador3DHOP(monumento) {
       throw new Error("A biblioteca Presenter do 3DHOP não foi carregada.");
     }
 
+    ajustarResolucaoCanvas();
+
     presenter = new Presenter("draw-canvas");
     window.presenter = presenter;
 
@@ -145,6 +147,24 @@ function iniciarVisualizador3DHOP(monumento) {
       }
     });
 
+    window.addEventListener("resize", () => {
+      ajustarResolucaoCanvas();
+
+      if (window.presenter && typeof window.presenter.repaint === "function") {
+        window.presenter.repaint();
+      }
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      setTimeout(() => {
+        ajustarResolucaoCanvas();
+
+        if (window.presenter && typeof window.presenter.repaint === "function") {
+          window.presenter.repaint();
+        }
+      }, 300);
+    });
+
     if (status) {
       status.textContent = "Modelo carregado. Use o mouse ou toque para navegar.";
     }
@@ -156,4 +176,26 @@ function iniciarVisualizador3DHOP(monumento) {
         "Não foi possível carregar o visualizador. Verifique os arquivos do 3DHOP e o caminho do modelo .nxs.";
     }
   }
+}
+
+function ajustarResolucaoCanvas() {
+  const canvas = document.getElementById("draw-canvas");
+
+  if (!canvas) {
+    return;
+  }
+
+  const larguraVisual = canvas.clientWidth;
+  const alturaVisual = canvas.clientHeight;
+  const proporcaoTela = window.devicePixelRatio || 1;
+
+  if (larguraVisual <= 0 || alturaVisual <= 0) {
+    return;
+  }
+
+  canvas.width = Math.floor(larguraVisual * proporcaoTela);
+  canvas.height = Math.floor(alturaVisual * proporcaoTela);
+
+  canvas.style.width = `${larguraVisual}px`;
+  canvas.style.height = `${alturaVisual}px`;
 }
