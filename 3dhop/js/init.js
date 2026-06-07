@@ -150,15 +150,15 @@ function set3dhlg() {
   jQuery('#tdhlg').html("Powered by 3DHOP</br>CNR &nbsp;&ndash;&nbsp; ISTI");
   jQuery('#tdhlg').mouseover(function() {
 	 jQuery('#tdhlg').animate({ 
-		height: "25px"
+		height: "45px"
 	  }, "fast" );
 	 })
 	.mouseout(function() {
 	 jQuery('#tdhlg').animate({ 
-		height: "13px"
+		height: "50px"
 	  }, "slow" );
 	 });
-  jQuery('#tdhlg').click(function() { window.open('http://vcg.isti.cnr.it/3dhop/', '_blank') });
+  jQuery('#tdhlg').click(function() { window.open('https://3dhop.net/', '_blank') });
 }
 
 // +++ INTERFACE SWITCHING FUNCTIONS +++ //
@@ -193,11 +193,11 @@ function lightingSwitch(on) {
   }
 }
 
-function hotspotSwitch(on) {
+function hotspotSwitch(on) { 
   if(on === undefined) on = presenter.isSpotVisibilityEnabled();
 
   if(on){
-    jQuery('#hotspot').css("visibility", "hidden");
+    jQuery('#hotspot').css("visibility","hidden"); 
     jQuery('#hotspot_on').css("visibility", "visible");
   }
   else{
@@ -205,6 +205,7 @@ function hotspotSwitch(on) {
     jQuery('#hotspot').css("visibility", "visible");
   }
 }
+
 
 function pickpointSwitch(on) {
   if(on === undefined) on = presenter.isPickpointModeEnabled();
@@ -265,6 +266,7 @@ function cameraSwitch(on) {
   if(on){
     jQuery('#perspective').css("visibility", "hidden");
     jQuery('#orthographic').css("visibility", "visible");
+	
   }
   else{
     jQuery('#orthographic').css("visibility", "hidden");
@@ -272,19 +274,103 @@ function cameraSwitch(on) {
   }
 }
 
+// ------------------   copied, modified and added to 3DHOP   ---------------------- // 
 
-function helpSwitch(on) {
-  if(on === undefined) on = jQuery('#help').css("visibility")=="visible";
+function certainSwitch(on) {
+	if(on === undefined) on = jQuery('#certain').css("visibility")=="visible";
+  
+	if(on) {
+	  jQuery('#certain').css("visibility", "hidden");
+	  jQuery('#certain_on').css("visibility", "visible");
+	}
+	else {
+	  jQuery('#certain_on').css("visibility", "hidden");
+	  jQuery('#certain').css("visibility", "visible");
+	}
+  }
+
+function layerSwitch(on) {
+  if(on === undefined) on = jQuery('#layer').css("visibility")=="visible";
 
   if(on) {
-	jQuery('#help').css("visibility", "hidden");
-	jQuery('#help_on').css("visibility", "visible");
+	jQuery('#layer').css("visibility", "hidden");
+	jQuery('#layer_on').css("visibility", "visible");
   }
   else {
-	jQuery('#help_on').css("visibility", "hidden");
-	jQuery('#help').css("visibility", "visible");
+	jQuery('#layer_on').css("visibility", "hidden");
+	jQuery('#layer').css("visibility", "visible");
   }
 }
+
+function certainReset(on) {
+	if(on === undefined) on = jQuery('#layer').css("visibility")=="hidden";
+
+  if(on) {
+	jQuery('#certain').css("visibility", "visible");
+	jQuery('#certain_on').css("visibility", "hidden");
+	
+  }
+  else {
+	jQuery('#certain_on').css("visibility", "hidden");
+	jQuery('#certain').css("visibility", "visible");
+	
+  }
+  presenter.setInstanceVisibilityByName('Certain', false, true);
+  presenter.setInstanceVisibilityByName('Grundriss', true, true);
+  presenter.setInstanceVisibilityByName('Floor', true, true);
+}
+
+function layerReset(on) {
+	if(on === undefined) on = jQuery('#layer').css("visibility")=="hidden";
+
+  if(on) {
+	jQuery('#layer').css("visibility", "visible");
+	jQuery('#layer_on').css("visibility", "hidden");
+	
+  }
+  else {
+	jQuery('#layer_on').css("visibility", "hidden");
+	jQuery('#layer').css("visibility", "visible");
+	
+  }
+  presenter.setInstanceVisibilityByName('Outer', false, true);
+}
+
+
+function existingSwitch(on) {
+	if(on === undefined) on = jQuery('#existing').css("visibility")=="visible";
+  
+	if(on) {
+	  jQuery('#existing').css("visibility", "hidden");
+	  jQuery('#existing_on').css("visibility", "visible");
+	}
+	else {
+	  jQuery('#existing_on').css("visibility", "hidden");
+	  jQuery('#existing').css("visibility", "visible");
+	}
+
+}
+  
+function existingReset(on) {
+	if(on === undefined) on = jQuery('#existing').css("visibility")=="hidden";
+  
+	if(on) {
+	  jQuery('#existing').css("visibility", "visible");
+	  jQuery('#existing_on').css("visibility", "hidden");
+	  
+	}
+	else {
+	  jQuery('#existing_on').css("visibility", "hidden");
+	  jQuery('#existing').css("visibility", "visible");
+	  
+	}
+	presenter.setInstanceVisibilityByName('Outer', false, true);
+	presenter.setInstanceVisibilityByName('Added', true, true);
+	presenter.setInstanceVisibilityByName('Border', true, true);
+	presenter.setInstanceVisibilityByName('Ortho', false, true);
+}
+// -----------------------------------------------------------------------------  //
+
 
 function sectiontoolSwitch(on) {
   if(on === undefined) on = jQuery('#sections').css("visibility")=="visible";
@@ -563,7 +649,7 @@ function resizeCanvas(w,h) {
   jQuery('#3dhop').css('width', w);
   jQuery('#3dhop').css('height', h);
 
-  presenter._resizable = false;
+  presenter._resizable = true;
 }
 
 function anchorPanels() {

@@ -1,15 +1,7 @@
 let presenter = null;
 window.presenter = presenter;
 
-let modoAtual = "rotate";
 let monumentoAtual = null;
-let orientacaoAtual = "front";
-let medicaoAtiva = false;
-let iluminacaoAtiva = true;
-
-let mouseControlado = false;
-let ultimoMouseX = 0;
-let ultimoMouseY = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
   const monumento = obterMonumentoAtual();
@@ -23,9 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   preencherInformacoes(monumento);
   configurarBotoesExternos();
-  iniciarVisualizador3DHOP(monumento);
   bloquearMenuContextoDoVisualizador();
-  configurarControlesPersonalizadosDeMouse();
+  iniciar3DHOP(monumento);
 });
 
 function obterMonumentoAtual() {
@@ -77,70 +68,33 @@ function configurarBotoesExternos() {
 
   if (btnResetCamera) {
     btnResetCamera.addEventListener("click", () => {
-      resetarModelo3DHOP();
+      if (window.presenter && typeof window.presenter.resetTrackball === "function") {
+        window.presenter.resetTrackball();
+      }
+
+      atualizarStatus("Modelo recentralizado.");
+      repintar3DHOP();
     });
   }
 
   if (btnFullscreen) {
     btnFullscreen.addEventListener("click", () => {
-      abrirTelaCheia3DHOP();
+      actionsToolbar("full");
     });
   }
 }
 
-function iniciarVisualizador3DHOP(monumento) {
-  const status = document.getElementById("viewerStatus");
-
+function iniciar3DHOP(monumento) {
   try {
-    if (typeof Presenter === "undefined") {
-      throw new Error("A biblioteca Presenter do 3DHOP não foi carregada.");
+    if (typeof init3dhop === "function") {
+      init3dhop();
     }
 
-    ajustarResolucaoCanvas();
+    setup3dhop(monumento);
 
-    presenter = new Presenter("draw-canvas");
-    window.presenter = presenter;
-
-    const tipoTrackball =
-      typeof SphereTrackball !== "undefined"
-        ? SphereTrackball
-        : TurntablePanTrackball;
-
-    presenter.setScene({
-      meshes: {
-        modelo_principal: {
-          url: monumento.modelo
-        }
-      },
-
-      modelInstances: {
-        instancia_modelo: {
-          mesh: "modelo_principal"
-        }
-      },
-
-      trackball: {
-        type: tipoTrackball,
-
-        trackOptions: {
-          startDistance: 2.5,
-          minMaxDist: [0.2, 60.0],
-          startPhi: 0.0,
-          startTheta: 0.0,
-          startPanX: 0.0,
-          startPanY: 0.0,
-          startPanZ: 0.0
-        }
-      },
-
-      space: {
-        centerMode: "scene",
-        radiusMode: "scene"
-      }
-    });
-
-    definirModo3DHOP("rotate");
-    marcarOrientacaoAtiva("front");
+    atualizarStatus(
+      "Modelo carregado. Use a barra lateral para navegar, medir e controlar a luz."
+    );
 
     setTimeout(() => {
       ajustarResolucaoCanvas();
@@ -163,189 +117,233 @@ function iniciarVisualizador3DHOP(monumento) {
         repintar3DHOP();
       }, 300);
     });
-
-    if (status) {
-      status.textContent =
-        "Modelo carregado. Selecione rotação, pan ou zoom na barra de ferramentas.";
-    }
   } catch (erro) {
     console.error(erro);
 
-    if (status) {
-      status.textContent =
-        "Não foi possível carregar o visualizador. Verifique os arquivos do 3DHOP e o caminho do modelo .nxs.";
-    }
+    atualizarStatus(
+      "Não foi possível carregar o visualizador. Verifique os arquivos do 3DHOP e o caminho do modelo .nxs."
+    );
   }
+}
+
+function setup3dhop(monumento) {
+  presenter = new Presenter("draw-canvas");
+  window.presenter = presenter;
+
+  presenter.setScene({
+    meshes: {
+      modelo_principal: {
+        url: monumento.modelo
+      }
+    },
+
+    modelInstances: {
+      instancia_modelo: {
+        mesh: "modelo_principal"
+      }
+    },
+
+    trackball: {
+      type: TurntablePanTrackball,
+
+      trackOptions: {
+        startPhi: 0.0,
+        startTheta: 0.0,
+        startDistance: 2.5,
+
+        startPanX: 0.0,
+        startPanY: 0.0,
+        startPanZ: 0.0,
+
+        minMaxPhi: [-180.0, 180.0],
+        minMaxTheta: [-180.0, 180.0],
+        minMaxDist: [0.2, 80.0],
+
+        minMaxPanX: [-10.0, 10.0],
+        minMaxPanY: [-10.0, 10.0],
+        minMaxPanZ: [-10.0, 10.0]
+      }
+    },
+
+    config: {
+      showClippingPlanes: false,
+      showClippingBorder: false
+    },
+
+    space: {
+      centerMode: "scene",
+      radiusMode: "scene"
+    }
+  });
+
+  presenter._onEndMeasurement = onEndMeasure;
+
+  if (typeof presenter.enableSceneLighting === "function") {
+    presenter.enableSceneLighting(true);
+  }
+
+  if (typeof lightSwitch === "function") {
+    lightSwitch(false);
+  }
+
+  if (typeof lightingSwitch === "function") {
+    lightingSwitch(true);
+  }
+
+  if (typeof measureSwitch === "function") {
+    measureSwitch(false);
+  }
+}
+
+function actionsToolbar(action) {
+  if (!window.presenter) {
+    return;
+  }
+
+  if (action === "home") {
+    window.presenter.resetTrackball();
+
+    if (typeof measureSwitch === "function") {
+      measureSwitch(false);
+    }
+
+    if (typeof window.presenter.enableMeasurementTool === "function") {
+      window.presenter.enableMeasurementTool(false);
+    }
+
+    atualizarStatus("Modelo recentralizado.");
+    repintar3DHOP();
+    return;
+  }
+
+  if (action === "zoomin") {
+    window.presenter.zoomIn();
+    repintar3DHOP();
+    return;
+  }
+
+  if (action === "zoomout") {
+    window.presenter.zoomOut();
+    repintar3DHOP();
+    return;
+  }
+
+  if (action === "lighting" || action === "lighting_off") {
+    if (typeof window.presenter.isSceneLightingEnabled === "function" &&
+        typeof window.presenter.enableSceneLighting === "function") {
+      window.presenter.enableSceneLighting(!window.presenter.isSceneLightingEnabled());
+
+      if (typeof lightingSwitch === "function") {
+        lightingSwitch();
+      }
+
+      atualizarStatus(
+        window.presenter.isSceneLightingEnabled()
+          ? "Iluminação ligada."
+          : "Iluminação desligada."
+      );
+    }
+
+    repintar3DHOP();
+    return;
+  }
+
+  if (action === "light" || action === "light_on") {
+    if (typeof window.presenter.isLightTrackballEnabled === "function" &&
+        typeof window.presenter.enableLightTrackball === "function") {
+      window.presenter.enableLightTrackball(!window.presenter.isLightTrackballEnabled());
+
+      if (typeof lightSwitch === "function") {
+        lightSwitch();
+      }
+
+      atualizarStatus(
+        window.presenter.isLightTrackballEnabled()
+          ? "Controle de luz ativo. Arraste o mouse para orientar a luz. Clique novamente no ícone para voltar à rotação."
+          : "Controle de luz desativado. Arraste o mouse para rotacionar o modelo."
+      );
+    }
+
+    repintar3DHOP();
+    return;
+  }
+
+  if (action === "measure" || action === "measure_on") {
+    if (typeof window.presenter.isMeasurementToolEnabled === "function" &&
+        typeof window.presenter.enableMeasurementTool === "function") {
+      window.presenter.enableMeasurementTool(!window.presenter.isMeasurementToolEnabled());
+
+      if (typeof measureSwitch === "function") {
+        measureSwitch();
+      }
+
+      atualizarStatus(
+        window.presenter.isMeasurementToolEnabled()
+          ? "Medição ativa. Clique em dois pontos do modelo."
+          : "Medição desativada."
+      );
+    }
+
+    repintar3DHOP();
+    return;
+  }
+
+  if (action === "full" || action === "full_on") {
+    if (typeof fullscreenSwitch === "function") {
+      fullscreenSwitch();
+    } else {
+      abrirTelaCheiaManual();
+    }
+
+    setTimeout(() => {
+      ajustarResolucaoCanvas();
+      repintar3DHOP();
+    }, 300);
+
+    return;
+  }
+}
+
+function onEndMeasure(measure) {
+  const valor = Number(measure);
+
+  if (Number.isNaN(valor)) {
+    $("#measure-output").html("0.00 m");
+    return;
+  }
+
+  $("#measure-output").html(`${valor.toFixed(2)} m`);
 }
 
 function bloquearMenuContextoDoVisualizador() {
   const viewer = document.getElementById("3dhop");
   const canvas = document.getElementById("draw-canvas");
 
+  const bloquear = (evento) => {
+    evento.preventDefault();
+    evento.stopPropagation();
+    return false;
+  };
+
   if (viewer) {
-    viewer.addEventListener("contextmenu", (evento) => {
-      evento.preventDefault();
-      evento.stopPropagation();
-      return false;
-    });
+    viewer.addEventListener("contextmenu", bloquear, true);
   }
 
   if (canvas) {
-    canvas.addEventListener("contextmenu", (evento) => {
-      evento.preventDefault();
-      evento.stopPropagation();
-      return false;
-    });
-  }
-}
-
-function configurarControlesPersonalizadosDeMouse() {
-  const canvas = document.getElementById("draw-canvas");
-
-  if (!canvas) {
-    return;
+    canvas.addEventListener("contextmenu", bloquear, true);
   }
 
-  canvas.addEventListener(
-    "mousedown",
+  document.addEventListener(
+    "contextmenu",
     (evento) => {
-      if (evento.button !== 0) {
-        return;
-      }
-
-      if (modoAtual === "rotate" || modoAtual === "measure") {
-        return;
-      }
-
-      evento.preventDefault();
-      evento.stopImmediatePropagation();
-
-      mouseControlado = true;
-      ultimoMouseX = evento.clientX;
-      ultimoMouseY = evento.clientY;
-
-      if (modoAtual === "pan") {
-        canvas.style.cursor = "grabbing";
-      }
-
-      if (modoAtual === "zoom") {
-        canvas.style.cursor = "zoom-in";
+      if (viewer && viewer.contains(evento.target)) {
+        evento.preventDefault();
+        evento.stopPropagation();
+        return false;
       }
     },
     true
   );
-
-  window.addEventListener(
-    "mousemove",
-    (evento) => {
-      if (!mouseControlado) {
-        return;
-      }
-
-      evento.preventDefault();
-
-      const deltaX = evento.clientX - ultimoMouseX;
-      const deltaY = evento.clientY - ultimoMouseY;
-
-      ultimoMouseX = evento.clientX;
-      ultimoMouseY = evento.clientY;
-
-      if (modoAtual === "pan") {
-        aplicarPanPorDelta(deltaX, deltaY);
-      }
-
-      if (modoAtual === "zoom") {
-        aplicarZoomPorDelta(deltaY);
-      }
-    },
-    true
-  );
-
-  window.addEventListener(
-    "mouseup",
-    () => {
-      if (!mouseControlado) {
-        return;
-      }
-
-      mouseControlado = false;
-
-      if (modoAtual === "pan") {
-        canvas.style.cursor = "move";
-      }
-
-      if (modoAtual === "zoom") {
-        canvas.style.cursor = "zoom-in";
-      }
-    },
-    true
-  );
-}
-
-function aplicarPanPorDelta(deltaX, deltaY) {
-  const canvas = document.getElementById("draw-canvas");
-
-  if (!canvas || !window.presenter) {
-    return;
-  }
-
-  const eventoDown = new MouseEvent("mousedown", {
-    bubbles: true,
-    cancelable: true,
-    clientX: ultimoMouseX - deltaX,
-    clientY: ultimoMouseY - deltaY,
-    button: 2,
-    buttons: 2
-  });
-
-  const eventoMove = new MouseEvent("mousemove", {
-    bubbles: true,
-    cancelable: true,
-    clientX: ultimoMouseX,
-    clientY: ultimoMouseY,
-    button: 2,
-    buttons: 2
-  });
-
-  const eventoUp = new MouseEvent("mouseup", {
-    bubbles: true,
-    cancelable: true,
-    clientX: ultimoMouseX,
-    clientY: ultimoMouseY,
-    button: 2,
-    buttons: 0
-  });
-
-  marcarEventoSintetico(eventoDown);
-  marcarEventoSintetico(eventoMove);
-  marcarEventoSintetico(eventoUp);
-
-  canvas.dispatchEvent(eventoDown);
-  canvas.dispatchEvent(eventoMove);
-  canvas.dispatchEvent(eventoUp);
-
-  repintar3DHOP();
-}
-
-function aplicarZoomPorDelta(deltaY) {
-  const intensidade = Math.max(-8, Math.min(8, deltaY));
-
-  if (intensidade === 0) {
-    return;
-  }
-
-  simularZoomPorRoda(intensidade > 0 ? 1 : -1);
-  repintar3DHOP();
-}
-
-function marcarEventoSintetico(evento) {
-  try {
-    Object.defineProperty(evento, "__synthetic3dhop", {
-      value: true
-    });
-  } catch (erro) {
-    // Sem ação necessária.
-  }
 }
 
 function ajustarResolucaoCanvas() {
@@ -384,392 +382,15 @@ function repintar3DHOP() {
   }
 }
 
-function definirModo3DHOP(modo) {
-  modoAtual = modo;
-
-  const canvas = document.getElementById("draw-canvas");
+function atualizarStatus(texto) {
   const status = document.getElementById("viewerStatus");
-
-  document
-    .querySelectorAll(".tool-button")
-    .forEach((botao) => botao.classList.remove("active-tool"));
-
-  const botaoAtivo = document.querySelector(`[data-tool="${modo}"]`);
-
-  if (botaoAtivo) {
-    botaoAtivo.classList.add("active-tool");
-  }
-
-  if (!canvas) {
-    return;
-  }
-
-  if (modo === "rotate") {
-    canvas.style.cursor = "grab";
-
-    if (status) {
-      status.textContent =
-        "Modo rotação 360 ativo. Arraste com o botão esquerdo do mouse para girar o modelo.";
-    }
-  }
-
-  if (modo === "pan") {
-    canvas.style.cursor = "move";
-
-    if (status) {
-      status.textContent =
-        "Modo pan ativo. Arraste com o botão esquerdo do mouse para deslocar a visualização.";
-    }
-  }
-
-  if (modo === "zoom") {
-    canvas.style.cursor = "zoom-in";
-
-    if (status) {
-      status.textContent =
-        "Modo zoom ativo. Arraste com o botão esquerdo do mouse para cima ou para baixo.";
-    }
-  }
-
-  if (modo === "measure") {
-    canvas.style.cursor = "crosshair";
-
-    if (status) {
-      status.textContent =
-        "Modo medição ativo. Clique em dois pontos do modelo para medir. A unidade será metro se o modelo estiver em escala métrica.";
-    }
-  }
-
-  if (modo === "lighting") {
-    canvas.style.cursor = "grab";
-
-    if (status) {
-      status.textContent =
-        iluminacaoAtiva
-          ? "Iluminação ativada."
-          : "Iluminação desativada.";
-    }
-  }
-}
-
-function marcarOrientacaoAtiva(orientacao) {
-  orientacaoAtual = orientacao;
-
-  document
-    .querySelectorAll(".orientation-button")
-    .forEach((botao) => botao.classList.remove("active-orientation"));
-
-  const botaoAtivo = document.querySelector(`[data-view="${orientacao}"]`);
-
-  if (botaoAtivo) {
-    botaoAtivo.classList.add("active-orientation");
-  }
-}
-
-function atualizarStatusOrientacao(orientacao) {
-  const status = document.getElementById("viewerStatus");
-
-  const nomes = {
-    front: "frente",
-    back: "trás",
-    left: "esquerda",
-    right: "direita",
-    top: "topo",
-    bottom: "base"
-  };
 
   if (status) {
-    status.textContent = `Vista ${nomes[orientacao] || orientacao} selecionada. Você ainda pode girar, aproximar ou deslocar o modelo.`;
+    status.textContent = texto;
   }
 }
 
-function aplicarOrientacao3DHOP(orientacao) {
-  if (!window.presenter) {
-    return;
-  }
-
-  marcarOrientacaoAtiva(orientacao);
-  definirModo3DHOP("rotate");
-
-  try {
-    aplicarMatrizDeOrientacao(orientacao);
-    atualizarStatusOrientacao(orientacao);
-    repintar3DHOP();
-  } catch (erro) {
-    console.warn("Não foi possível aplicar a orientação diretamente.", erro);
-    atualizarStatusOrientacao(orientacao);
-    repintar3DHOP();
-  }
-}
-
-function aplicarMatrizDeOrientacao(orientacao) {
-  if (!window.presenter || !window.presenter.trackball) {
-    return;
-  }
-
-  if (typeof SglMat4 === "undefined") {
-    return;
-  }
-
-  let matriz = SglMat4.identity();
-
-  if (orientacao === "front") {
-    matriz = SglMat4.identity();
-  }
-
-  if (orientacao === "back") {
-    matriz = SglMat4.rotationAngleAxis(Math.PI, [0.0, 1.0, 0.0]);
-  }
-
-  if (orientacao === "left") {
-    matriz = SglMat4.rotationAngleAxis(Math.PI / 2, [0.0, 1.0, 0.0]);
-  }
-
-  if (orientacao === "right") {
-    matriz = SglMat4.rotationAngleAxis(-Math.PI / 2, [0.0, 1.0, 0.0]);
-  }
-
-  if (orientacao === "top") {
-    matriz = SglMat4.rotationAngleAxis(Math.PI / 2, [1.0, 0.0, 0.0]);
-  }
-
-  if (orientacao === "bottom") {
-    matriz = SglMat4.rotationAngleAxis(-Math.PI / 2, [1.0, 0.0, 0.0]);
-  }
-
-  if (window.presenter.trackball._matrix) {
-    window.presenter.trackball._matrix = matriz;
-  }
-
-  if (window.presenter._scene && window.presenter._scene.trackball) {
-    window.presenter._scene.trackball.locked = false;
-  }
-}
-
-function resetarModelo3DHOP() {
-  if (!window.presenter) {
-    return;
-  }
-
-  try {
-    if (window.presenter.trackball && typeof SglMat4 !== "undefined") {
-      window.presenter.trackball._matrix = SglMat4.identity();
-    }
-
-    if (window.presenter._scene && window.presenter._scene.trackball) {
-      window.presenter._scene.trackball.locked = false;
-    }
-
-    marcarOrientacaoAtiva("front");
-    definirModo3DHOP("rotate");
-    atualizarStatusOrientacao("front");
-    repintar3DHOP();
-  } catch (erro) {
-    console.warn("Não foi possível recentralizar pela matriz.", erro);
-    definirModo3DHOP("rotate");
-    repintar3DHOP();
-  }
-}
-
-function ativarRotacao3603DHOP() {
-  desativarMedicao3DHOP();
-  definirModo3DHOP("rotate");
-
-  if (window.presenter && window.presenter._scene && window.presenter._scene.trackball) {
-    window.presenter._scene.trackball.locked = false;
-  }
-
-  repintar3DHOP();
-}
-
-function ativarPan3DHOP() {
-  desativarMedicao3DHOP();
-  definirModo3DHOP("pan");
-
-  if (window.presenter && window.presenter._scene && window.presenter._scene.trackball) {
-    window.presenter._scene.trackball.locked = false;
-  }
-
-  repintar3DHOP();
-}
-
-function ativarZoom3DHOP() {
-  desativarMedicao3DHOP();
-  definirModo3DHOP("zoom");
-
-  if (window.presenter && window.presenter._scene && window.presenter._scene.trackball) {
-    window.presenter._scene.trackball.locked = false;
-  }
-
-  repintar3DHOP();
-}
-
-function aproximarModelo3DHOP() {
-  if (!window.presenter) {
-    return;
-  }
-
-  desativarMedicao3DHOP();
-  definirModo3DHOP("zoom");
-
-  if (typeof window.presenter.zoomIn === "function") {
-    window.presenter.zoomIn();
-  } else {
-    simularZoomPorRoda(-1);
-  }
-
-  repintar3DHOP();
-}
-
-function afastarModelo3DHOP() {
-  if (!window.presenter) {
-    return;
-  }
-
-  desativarMedicao3DHOP();
-  definirModo3DHOP("zoom");
-
-  if (typeof window.presenter.zoomOut === "function") {
-    window.presenter.zoomOut();
-  } else {
-    simularZoomPorRoda(1);
-  }
-
-  repintar3DHOP();
-}
-
-function simularZoomPorRoda(direcao) {
-  const canvas = document.getElementById("draw-canvas");
-
-  if (!canvas) {
-    return;
-  }
-
-  const evento = new WheelEvent("wheel", {
-    deltaY: direcao * 120,
-    bubbles: true,
-    cancelable: true
-  });
-
-  canvas.dispatchEvent(evento);
-}
-
-function alternarIluminacao3DHOP() {
-  if (!window.presenter) {
-    return;
-  }
-
-  iluminacaoAtiva = !iluminacaoAtiva;
-
-  try {
-    if (typeof window.presenter.enableSceneLighting === "function") {
-      window.presenter.enableSceneLighting(iluminacaoAtiva);
-    } else if (typeof window.presenter.setSceneLighting === "function") {
-      window.presenter.setSceneLighting(iluminacaoAtiva);
-    } else if (typeof window.presenter.toggleSceneLighting === "function") {
-      window.presenter.toggleSceneLighting();
-    } else if (typeof window.presenter.enableLighting === "function") {
-      window.presenter.enableLighting(iluminacaoAtiva);
-    } else if (typeof window.presenter.toggleLighting === "function") {
-      window.presenter.toggleLighting();
-    }
-
-    const botao = document.querySelector('[data-tool="lighting"]');
-
-    if (botao) {
-      if (iluminacaoAtiva) {
-        botao.classList.add("active-tool");
-      } else {
-        botao.classList.remove("active-tool");
-      }
-    }
-
-    const status = document.getElementById("viewerStatus");
-
-    if (status) {
-      status.textContent =
-        iluminacaoAtiva
-          ? "Iluminação ativada."
-          : "Iluminação desativada.";
-    }
-
-    repintar3DHOP();
-  } catch (erro) {
-    console.warn("Não foi possível alternar a iluminação nesta versão do 3DHOP.", erro);
-
-    const status = document.getElementById("viewerStatus");
-
-    if (status) {
-      status.textContent =
-        "A iluminação não pôde ser alternada nesta configuração do 3DHOP.";
-    }
-  }
-}
-
-function alternarMedicao3DHOP() {
-  if (!window.presenter) {
-    return;
-  }
-
-  medicaoAtiva = !medicaoAtiva;
-
-  try {
-    if (typeof window.presenter.enableMeasurementTool === "function") {
-      window.presenter.enableMeasurementTool(medicaoAtiva);
-    }
-
-    const botao = document.querySelector('[data-tool="measure"]');
-
-    if (botao) {
-      if (medicaoAtiva) {
-        botao.classList.add("active-tool");
-      } else {
-        botao.classList.remove("active-tool");
-      }
-    }
-
-    if (medicaoAtiva) {
-      definirModo3DHOP("measure");
-    } else {
-      definirModo3DHOP("rotate");
-    }
-
-    repintar3DHOP();
-  } catch (erro) {
-    console.warn("Não foi possível ativar a medição nesta versão do 3DHOP.", erro);
-
-    const status = document.getElementById("viewerStatus");
-
-    if (status) {
-      status.textContent =
-        "A ferramenta de medição não pôde ser ativada nesta configuração do 3DHOP.";
-    }
-  }
-}
-
-function desativarMedicao3DHOP() {
-  if (!medicaoAtiva || !window.presenter) {
-    return;
-  }
-
-  medicaoAtiva = false;
-
-  try {
-    if (typeof window.presenter.enableMeasurementTool === "function") {
-      window.presenter.enableMeasurementTool(false);
-    }
-  } catch (erro) {
-    // Sem ação necessária.
-  }
-
-  const botao = document.querySelector('[data-tool="measure"]');
-
-  if (botao) {
-    botao.classList.remove("active-tool");
-  }
-}
-
-function abrirTelaCheia3DHOP() {
+function abrirTelaCheiaManual() {
   const viewer = document.getElementById("3dhop");
 
   if (!viewer) {
@@ -783,9 +404,4 @@ function abrirTelaCheia3DHOP() {
   } else if (viewer.msRequestFullscreen) {
     viewer.msRequestFullscreen();
   }
-
-  setTimeout(() => {
-    ajustarResolucaoCanvas();
-    repintar3DHOP();
-  }, 300);
 }

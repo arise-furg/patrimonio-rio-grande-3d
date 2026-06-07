@@ -30,7 +30,7 @@
   </header>
 
   <main>
-    <section class="viewer-hero">
+    <section class="viewer-hero compact-viewer-hero">
       <div class="container viewer-hero-content">
         <div>
           <p class="section-label" id="viewerCategoria">Monumento histórico</p>
@@ -61,8 +61,8 @@
       </div>
     </section>
 
-    <section class="viewer-layout">
-      <aside class="viewer-sidebar">
+    <section class="viewer-layout duewelsteene-layout">
+      <aside class="viewer-sidebar duewelsteene-sidebar">
         <h2>Informações</h2>
 
         <p id="viewerDescricao"></p>
@@ -78,205 +78,118 @@
         </div>
 
         <div class="notice">
-          <h3>Como navegar</h3>
+          <h3>Navegação</h3>
           <p>
-            Use os botões sobre o visualizador para escolher rotação, pan ou zoom.
-            No modo pan e no modo zoom, use o botão esquerdo do mouse sobre a tela 3D.
+            Use o mouse para rotacionar o modelo. Use a roda do mouse ou os botões
+            de lupa para aproximar e afastar.
           </p>
         </div>
 
         <div class="notice">
-          <h3>Orientações</h3>
+          <h3>Ferramentas</h3>
           <p>
-            Os botões Frente, Trás, Esquerda, Direita, Topo e Base ajudam a posicionar
-            rapidamente a visualização do modelo.
+            A barra lateral do visualizador permite recentralizar, aproximar,
+            afastar, controlar a luz, medir distâncias e abrir em tela cheia.
           </p>
         </div>
 
         <div class="notice">
           <h3>Medição</h3>
           <p>
-            A ferramenta de medição usa a unidade espacial do modelo. Se o modelo foi
-            escalado em metros antes da conversão para <code>.nxs</code>, a leitura
-            corresponderá a metros.
-          </p>
-        </div>
-
-        <div class="notice">
-          <h3>Observação técnica</h3>
-          <p>
-            Caso o modelo não carregue, verifique se o arquivo <code>.nxs</code>
-            foi enviado corretamente para a pasta <code>models/</code>.
+            Clique no ícone de régua e selecione dois pontos no modelo. A medida
+            será exibida em metros se o modelo tiver sido exportado em escala métrica.
           </p>
         </div>
       </aside>
 
-      <section class="viewer-canvas-area">
-        <div id="viewerStatus" class="viewer-status">
+      <section class="viewer-canvas-area duewelsteene-canvas-area">
+        <div class="viewer-instruction-panel">
+          <div class="viewer-instruction-header">
+            <span class="viewer-instruction-icon">ℹ</span>
+            <span>Navegando no modelo 3D</span>
+          </div>
+
+          <div class="viewer-instruction-body">
+            Aguarde até que o modelo esteja visível. Para melhor funcionamento,
+            use um navegador atualizado. A barra à esquerda contém as ferramentas
+            principais do 3DHOP.
+          </div>
+        </div>
+
+        <div id="viewerStatus" class="viewer-status duewelsteene-status">
           Carregando visualizador 3D...
         </div>
 
-        <div id="3dhop" class="tdhop viewer-box">
-          <!-- Barra principal de ferramentas -->
-          <div id="toolbar" class="toolbar-3dhop-custom">
-            <button
-              class="tool-button"
-              type="button"
-              title="Rotação livre 360"
-              aria-label="Rotação livre 360"
-              data-tool="rotate"
-              onclick="ativarRotacao3603DHOP()"
-            >
-              ⊙
-            </button>
+        <div id="3dhop" class="tdhop duewelsteene-viewer" onmousedown="if (event.preventDefault) event.preventDefault()" oncontextmenu="return false;">
+          <div id="tdhlg"></div>
 
-            <button
-              class="tool-button"
-              type="button"
-              title="Pan / deslocar visualização"
-              aria-label="Pan / deslocar visualização"
-              data-tool="pan"
-              onclick="ativarPan3DHOP()"
-            >
-              ✥
-            </button>
+          <div id="toolbar">
+            <img id="home" title="Recentralizar modelo" src="3dhop/skins/dark/home.png" /><br />
 
-            <button
-              class="tool-button"
-              type="button"
-              title="Zoom por arraste"
-              aria-label="Zoom por arraste"
-              data-tool="zoom"
-              onclick="ativarZoom3DHOP()"
-            >
-              🔍
-            </button>
+            <img id="zoomin" title="Aproximar" src="3dhop/skins/dark/zoomin.png" /><br />
+            <img id="zoomout" title="Afastar" src="3dhop/skins/dark/zoomout.png" /><br />
 
-            <button
-              class="tool-button"
-              type="button"
-              title="Aproximar"
-              aria-label="Aproximar"
-              onclick="aproximarModelo3DHOP()"
-            >
-              +
-            </button>
+            <img
+              id="lighting_off"
+              title="Ligar iluminação"
+              src="3dhop/skins/dark/lighting_off.png"
+              style="position:absolute; visibility:hidden;"
+            />
+            <img
+              id="lighting"
+              title="Desligar iluminação"
+              src="3dhop/skins/dark/lighting.png"
+            /><br />
 
-            <button
-              class="tool-button"
-              type="button"
-              title="Afastar"
-              aria-label="Afastar"
-              onclick="afastarModelo3DHOP()"
-            >
-              −
-            </button>
+            <img
+              id="light_on"
+              title="Desativar controle de luz"
+              src="3dhop/skins/dark/lightcontrol_on.png"
+              style="position:absolute; visibility:hidden;"
+            />
+            <img
+              id="light"
+              title="Ativar controle de luz"
+              src="3dhop/skins/dark/lightcontrol.png"
+            /><br />
 
-            <button
-              class="tool-button"
-              type="button"
-              title="Iluminação"
-              aria-label="Iluminação"
-              data-tool="lighting"
-              onclick="alternarIluminacao3DHOP()"
-            >
-              ☀
-            </button>
+            <img
+              id="measure_on"
+              title="Desativar ferramenta de medição"
+              src="3dhop/skins/dark/measure_on.png"
+              style="position:absolute; visibility:hidden;"
+            />
+            <img
+              id="measure"
+              title="Ativar ferramenta de medição"
+              src="3dhop/skins/dark/measure.png"
+            /><br />
 
-            <button
-              class="tool-button"
-              type="button"
-              title="Medição"
-              aria-label="Medição"
-              data-tool="measure"
-              onclick="alternarMedicao3DHOP()"
-            >
-              📏
-            </button>
-
-            <button
-              class="tool-button"
-              type="button"
-              title="Recentralizar modelo"
-              aria-label="Recentralizar modelo"
-              onclick="resetarModelo3DHOP()"
-            >
-              ⌂
-            </button>
-
-            <button
-              class="tool-button"
-              type="button"
+            <img
+              id="full_on"
+              title="Sair da tela cheia"
+              src="3dhop/skins/dark/full_on.png"
+              style="position:absolute; visibility:hidden;"
+            />
+            <img
+              id="full"
               title="Tela cheia"
-              aria-label="Tela cheia"
-              onclick="abrirTelaCheia3DHOP()"
-            >
-              ⛶
-            </button>
+              src="3dhop/skins/dark/full.png"
+            /><br />
           </div>
 
-          <!-- Painel de orientação -->
-          <div class="orientation-panel">
-            <div class="orientation-panel-title">Orientação</div>
-
-            <div class="orientation-grid">
-              <button
-                class="orientation-button"
-                type="button"
-                data-view="front"
-                onclick="aplicarOrientacao3DHOP('front')"
-              >
-                Frente
-              </button>
-
-              <button
-                class="orientation-button"
-                type="button"
-                data-view="back"
-                onclick="aplicarOrientacao3DHOP('back')"
-              >
-                Trás
-              </button>
-
-              <button
-                class="orientation-button"
-                type="button"
-                data-view="left"
-                onclick="aplicarOrientacao3DHOP('left')"
-              >
-                Esquerda
-              </button>
-
-              <button
-                class="orientation-button"
-                type="button"
-                data-view="right"
-                onclick="aplicarOrientacao3DHOP('right')"
-              >
-                Direita
-              </button>
-
-              <button
-                class="orientation-button"
-                type="button"
-                data-view="top"
-                onclick="aplicarOrientacao3DHOP('top')"
-              >
-                Topo
-              </button>
-
-              <button
-                class="orientation-button"
-                type="button"
-                data-view="bottom"
-                onclick="aplicarOrientacao3DHOP('bottom')"
-              >
-                Base
-              </button>
-            </div>
+          <div id="measure-box" class="output-box">
+            Distância medida
+            <hr />
+            <span id="measure-output" class="output-text" onmousedown="event.stopPropagation()">0.00 m</span>
           </div>
 
-          <canvas id="draw-canvas"></canvas>
+          <canvas
+            id="draw-canvas"
+            class="duewelsteene-canvas"
+            style="background-image: url(3dhop/skins/backgrounds/lightblue_empty_grid.jpg);"
+            oncontextmenu="return false;"
+          ></canvas>
         </div>
       </section>
     </section>
